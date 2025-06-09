@@ -1,37 +1,39 @@
-import { Box, Button, TextField } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import type { Purchase } from "../../PurchaseInformation";
 import { useState } from "react";
 import { styled } from "@mui/material/styles";
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import ClearIcon from '@mui/icons-material/Clear';
+import AddIcon from '@mui/icons-material/Add';
+import CheckIcon from '@mui/icons-material/Check';
 
 type InputFormProps = {
     availablePurchase?: Purchase;
-    handleAction: (purchase: Purchase) => void;
+    handleAdd?: (purchase: Purchase) => void;
+    handleUpdate?: (purchase: Purchase) => void;
+    handleDelete?: (purchase: Purchase) => void;
 }
 
-
 const InputField = styled(TextField)({
-    margin: 4,
+    margin: 2,
+    height: '20px',
     "& .MuiInputLabel-root:not(.MuiInputLabel-shrink)": {
-        transform: "translate(14px, 8px) scale(1)"
+        transform: "translate(8px, 2px) scale(1)"
     },
     "& .MuiInputLabel-root": {
-        color: "green",
-        alignSelf: 'center',
-        justifySelf: 'center'
-    },
-    "& .MuiInputLabel-root.Mui-focused": {
-        color: "purple"
+        fontSize: '12px',
     },
     "& .MuiInputBase-root": {
-        color: "red",
+        padding: '0px 4px',
+        fontSize: "12px",
+        height: "100%"
     },
     "& .MuiInputBase-input": {
-        padding: 8,
+        padding: 0,
     }
 })
 
-const InputForm = ({ availablePurchase, handleAction }: InputFormProps) => {
+const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }: InputFormProps) => {
     const [purchase, setPurchase] = useState<Purchase>(availablePurchase ?? {
         date: undefined,
         store: "",
@@ -55,18 +57,30 @@ const InputForm = ({ availablePurchase, handleAction }: InputFormProps) => {
         setPurchase({...purchase, store: event.target.value});
     }
 
-    const handleSubmitAction = () => {
-        handleAction(purchase);
+    const handleClear = () => {
+        setPurchase({
+            date: undefined,
+            store: "",
+            amount: 0,
+            category: ""
+        } as Purchase)
     }
 
     return (
-        <Box sx={{display: "flex"}}>
-            <InputField label="Date" name="date" value={purchase.date} onChange={handleDateChange} />
-            <InputField label="Store" name="store" value={purchase.store} onChange={handleStoreChange} />
-            <InputField label="Amount" name="amount" value={purchase.amount} onChange={handleAmountChange} />
-            <InputField label="Category" name="category" value={purchase.category} onChange={handleCategoryChange} />
-            <Button onClick={handleSubmitAction}>test</Button>
-        </Box>
+        <Grid container spacing={1} sx={{display: "flex", alignItems: "center"}}>
+            <Grid>
+                <InputField sx={{width: '75px'}} label="Date" name="date" value={purchase.date} onChange={handleDateChange} />
+                <InputField sx={{width: '150px'}} label="Store" name="store" value={purchase.store} onChange={handleStoreChange} />
+                <InputField sx={{width: '75px'}} label="Amount" name="amount" value={purchase.amount} onChange={handleAmountChange} />
+                <InputField sx={{width: '150px'}} label="Category" name="category" value={purchase.category} onChange={handleCategoryChange} />
+            </Grid>
+            <Grid>
+                {handleAdd && <AddIcon fontSize="small" onClick={() => handleAdd(purchase)}/>}
+                {handleAdd && <ClearIcon fontSize="small" onClick={() => handleClear()}/>}
+                {handleUpdate && <CheckIcon fontSize="small" onClick={() => handleUpdate(purchase)}/>}
+                {handleDelete && <DeleteIcon fontSize="small" onClick={() => handleDelete(purchase)}/>}
+            </Grid>
+        </Grid>
     )
 }
 

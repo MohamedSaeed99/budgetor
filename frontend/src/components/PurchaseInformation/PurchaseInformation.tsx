@@ -14,34 +14,37 @@ export interface Purchase {
 
 const PurchaseInformation = ({}) => {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
-  const [newPurchase, setNewPurchase] = useState<Purchase>({
-    date: undefined,
-    store: '',
-    amount: 0,
-    category: ''
-  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setPurchases([...purchases, newPurchase]);
-    setNewPurchase({
-      date: undefined,
-      store: '',
-      amount: 0,
-      category: ''
-    });
+  const handleAdd = (purchase: Purchase) => {
+    setPurchases([...purchases, purchase]);
+  };
+
+  const handleUpdate = (purchase: Purchase) => {
+    setPurchases([...purchases, purchase]);
+  };
+
+  const handleDelete = (purchase: Purchase) => {
+    setPurchases([...purchases, purchase]);
   };
 
   return (
     <Container sx={{ p: 2, ml: 0, px: 0 }}>
         <Paper 
-          component="form" 
-          onSubmit={handleSubmit}
-          sx={{padding: 2}}
+        variant='outlined'
+          sx={{padding:2,
+            display: "flex",
+            flexDirection: "column",
+            gap: 1
+          }}
         >
-            <InputForm handleAction={function (purchase: Purchase): void {
-                  throw new Error('Function not implemented.');
-              } } />
+            {purchases.map((purchase, index) => 
+                <InputForm key={index}
+                    availablePurchase={purchase} 
+                    handleUpdate={handleUpdate}
+                    handleDelete={handleDelete}
+                />
+            )}
+            <InputForm handleAdd={handleAdd}/>
         </Paper>
     </Container>
   )
