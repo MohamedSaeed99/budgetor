@@ -74,11 +74,35 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
                 <InputField sx={{width: '75px'}} label="Amount" name="amount" value={purchase.amount} onChange={handleAmountChange} />
                 <InputField sx={{width: '150px'}} label="Category" name="category" value={purchase.category} onChange={handleCategoryChange} />
             </Grid>
-            <Grid>
-                {handleAdd && <AddIcon fontSize="small" onClick={() => handleAdd(purchase)}/>}
-                {handleAdd && <ClearIcon fontSize="small" onClick={() => handleClear()}/>}
-                {handleUpdate && <CheckIcon fontSize="small" onClick={() => handleUpdate(purchase)}/>}
-                {handleDelete && <DeleteIcon fontSize="small" onClick={() => handleDelete(purchase)}/>}
+            <Grid display="flex" gap={2}>
+                {handleAdd && <AddIcon sx={{
+                    color: "rgba(0, 0, 0, 0.50)",
+                    ":hover": {
+                        color: "rgba(0, 0, 0, 0.80)",
+                        cursor: "pointer"
+                    }
+                }} fontSize="small" onClick={() => handleAdd(purchase)}/>}
+                {handleAdd && <ClearIcon sx={{
+                    color: "rgba(0, 0, 0, 0.50)",
+                    ":hover": {
+                        color: "rgba(0, 0, 0, 0.80)",
+                        cursor: "pointer"
+                    }
+                }} fontSize="small" onClick={() => handleClear()}/>}
+                {handleUpdate && <CheckIcon sx={{
+                    color: "rgba(0, 0, 0, 0.50)",
+                    ":hover": {
+                        color: "rgba(0, 0, 0, 0.80)",
+                        cursor: "pointer"
+                    }
+                }} fontSize="small" onClick={() => handleUpdate(purchase)}/>}
+                {handleDelete && <DeleteIcon sx={{
+                    color: "rgba(0, 0, 0, 0.50)",
+                    ":hover": {
+                        color: "rgba(0, 0, 0, 0.80)",
+                        cursor: "pointer"
+                    }
+                }} fontSize="small" onClick={() => handleDelete(purchase)}/>}
             </Grid>
         </Grid>
     )

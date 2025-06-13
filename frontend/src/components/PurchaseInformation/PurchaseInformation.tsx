@@ -20,11 +20,11 @@ const PurchaseInformation = ({}) => {
   };
 
   const handleUpdate = (purchase: Purchase) => {
-    setPurchases([...purchases, purchase]);
+    console.log(`update purchase ${purchase}`);
   };
 
   const handleDelete = (purchase: Purchase) => {
-    setPurchases([...purchases, purchase]);
+    console.log(`delete purchase ${purchase}`)
   };
 
   return (
