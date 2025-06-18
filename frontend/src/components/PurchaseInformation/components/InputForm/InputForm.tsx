@@ -1,4 +1,4 @@
-import { Grid, TextField } from "@mui/material";
+import { Grid, Input, TextField } from "@mui/material";
 import type { Purchase } from "../../PurchaseInformation";
 import { useState } from "react";
 import { styled } from "@mui/material/styles";
@@ -34,23 +34,38 @@ const InputField = styled(TextField)({
 })
 
 const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }: InputFormProps) => {
+    const [displayAmount, setDisplayAmount] = useState<string>("")
+    const [isDateFieldFocus, setIsDateFieldFocus] = useState<boolean>(false);
     const [purchase, setPurchase] = useState<Purchase>(availablePurchase ?? {
         date: undefined,
         store: "",
-        amount: 0,
+        amount: undefined,
         category: ""
     } as Purchase);
 
-    const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) =>{
-        setPurchase({...purchase, date: event.target.value as unknown as Date});
+    const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPurchase({...purchase, date: event.target.value});
     }
 
-    const handleCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) =>{
+    const handleCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPurchase({...purchase, category: event.target.value});
     }
 
-    const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) =>{
-        setPurchase({...purchase, amount: event.target.value as unknown as number});
+    const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const amount = event.target.value.replace(/[^0-9\.-]+/g,"")
+        setDisplayAmount(amount)
+        setPurchase({...purchase, amount: amount ? parseFloat(amount) : undefined});
+    }
+
+    const convertToCurrencyAmount = () => {
+        if (purchase.amount === undefined) setDisplayAmount('');
+        else
+            setDisplayAmount(new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(purchase.amount!));
     }
 
     const handleStoreChange = (event: React.ChangeEvent<HTMLInputElement>) =>{
@@ -61,17 +76,37 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
         setPurchase({
             date: undefined,
             store: "",
-            amount: 0,
+            amount: undefined,
             category: ""
         } as Purchase)
+    }
+
+    const dateExists = () => {
+        return purchase.date !== undefined && purchase.date !== "";
     }
 
     return (
         <Grid container spacing={1} sx={{display: "flex", alignItems: "center"}}>
             <Grid>
-                <InputField sx={{width: '75px'}} label="Date" name="date" value={purchase.date} onChange={handleDateChange} />
+                <InputField 
+                    sx={{width: "100px"}} 
+                    label="Date" 
+                    name="date" 
+                    type={dateExists() || isDateFieldFocus ? "date" : "text"} 
+                    value={purchase.date} onChange={handleDateChange}
+                    onFocus={() => setIsDateFieldFocus(true)}
+                    onBlur={() => setIsDateFieldFocus(false)} />
                 <InputField sx={{width: '150px'}} label="Store" name="store" value={purchase.store} onChange={handleStoreChange} />
-                <InputField sx={{width: '75px'}} label="Amount" name="amount" value={purchase.amount} onChange={handleAmountChange} />
+                <InputField 
+                    sx={{width: '75px'}} 
+                    label="Amount" 
+                    name="amount" 
+                    type="string"
+                    value={displayAmount} 
+                    onChange={handleAmountChange}
+                    onFocus={() => setDisplayAmount(purchase.amount?.toString() ?? "")}
+                    onBlur={convertToCurrencyAmount}
+                />
                 <InputField sx={{width: '150px'}} label="Category" name="category" value={purchase.category} onChange={handleCategoryChange} />
             </Grid>
             <Grid display="flex" gap={2}>

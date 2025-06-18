@@ -6,9 +6,9 @@ import {
 import InputForm from './components/InputForm/InputForm'
 
 export interface Purchase {
-  date: Date | undefined;
+  date: string | undefined;
   store: string;
-  amount: number;
+  amount: number | undefined;
   category: string;
 }
 
