@@ -11,7 +11,7 @@ load_dotenv()
 DB_CONFIG = {
     'database': os.getenv('DB_NAME', 'budgetor'),
     'user': os.getenv('DB_USER', 'postgres'),
-    'password': os.getenv('DB_PASSWORD', 'password'),
+    'password': os.getenv('DB_PASSWORD', ''),
     'host': os.getenv('DB_HOST', 'localhost'),
     'port': os.getenv('DB_PORT', '5432')
 }
