@@ -1,5 +1,5 @@
 import os
-from database.database import execute_query, test_connection
+from database import execute_query, test_connection
 
 def init_database():
     """Initialize the database with schema and sample data"""
@@ -36,3 +36,6 @@ def init_database():
     except Exception as e:
         print(f"Error initializing database: {e}")
         return False
+
+if __name__ == "__main__":
+    init_database()

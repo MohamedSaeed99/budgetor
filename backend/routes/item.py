@@ -1,6 +1,5 @@
 from fastapi import APIRouter
-from models.item import Item
-import services.item as item_service
+from models import Item
 
 router = APIRouter(
     prefix="/item"
@@ -8,7 +7,7 @@ router = APIRouter(
 
 @router.get("/")
 async def get_items():
-    return item_service.get_items("test")
+    return [{"item": "test_item"}]
 
 
 @router.post("/")
