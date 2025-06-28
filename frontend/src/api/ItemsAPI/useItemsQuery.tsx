@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getItems, addItem } from "./ItemsAPI";
 
-const Items = {
+const ItemsAPI = {
     GetItems: {
         useQuery: () => 
             useQuery({
@@ -12,9 +12,9 @@ const Items = {
     AddItem: {
         useMutation: (item: string) =>
             useMutation({
-                mutationFn: (item: string) => addItem(item),
+                mutationFn: () => addItem(item),
             })
     }
 }
 
-export default Items;
+export default ItemsAPI;

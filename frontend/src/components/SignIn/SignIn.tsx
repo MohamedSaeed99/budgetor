@@ -1,17 +1,20 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Alert, Button, CircularProgress, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material";
 import { useState } from "react";
-
+import api from "../../api/api";
+import type { User } from "../../models/User.models";
 
 type SignInProps = {
     loading: boolean,
-    setLoading: (value: boolean) => void
+    setLoading: (value: boolean) => void,
+    onSuccess: (authData: any) => void
 }
 
-const SignIn = ({loading, setLoading}: SignInProps) => {
+const SignIn = ({loading, setLoading, onSuccess}: SignInProps) => {
+    const {mutate} = api.User.Login.useMutation()
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<User>({
         email: '',
         password: '',
     });
@@ -36,11 +39,20 @@ const SignIn = ({loading, setLoading}: SignInProps) => {
                 throw new Error('Please fill in all required fields');
             }
     
-          // Simulate API call
-          await new Promise(resolve => setTimeout(resolve, 1500));
+            mutate(
+                { email: formData.email, password: formData.password },
+                {
+                    onSuccess: (authData) => {
+                        onSuccess(authData);
+                    },
+                    onError: (error: any) => {
+                        setError(error.message || 'Login failed');
+                        setLoading(false);
+                    }
+                }
+            );
         } catch (err) {
           setError(err instanceof Error ? err.message : 'An error occurred');
-        } finally {
           setLoading(false);
         }
       };

@@ -1,13 +1,17 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Alert, Button, CircularProgress, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material";
 import { useState } from "react";
+import api from "../../api/api";
 
 type SignUpProps = {
     loading: boolean,
-    setLoading: (value: boolean) => void
+    setLoading: (value: boolean) => void,
+    onSuccess: (authData: any) => void
 }
 
-const SignUp = ({loading, setLoading}: SignUpProps) => {
+const SignUp = ({loading, setLoading, onSuccess}: SignUpProps) => {
+    const {mutate} = api.User.Register.useMutation()
+
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -53,11 +57,20 @@ const SignUp = ({loading, setLoading}: SignUpProps) => {
             throw new Error('Please enter your name');
           }
     
-          // Simulate API call
-          await new Promise(resolve => setTimeout(resolve, 1500));
+          mutate(
+            {full_name: formData.name, email: formData.email, password: formData.password},
+            {
+                onSuccess: (authData) => {
+                    onSuccess(authData);
+                },
+                onError: (error: any) => {
+                    setError(error.message || 'Registration failed');
+                    setLoading(false);
+                }
+            }
+          );
         } catch (err) {
           setError(err instanceof Error ? err.message : 'An error occurred');
-        } finally {
           setLoading(false);
         }
     };

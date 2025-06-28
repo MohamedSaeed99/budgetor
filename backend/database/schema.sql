@@ -1,6 +1,9 @@
 -- Create db tables
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    full_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -22,10 +25,13 @@ CREATE INDEX IF NOT EXISTS idx_items_category ON items(category);
 -- Create index on created_at for sorting
 CREATE INDEX IF NOT EXISTS idx_items_created_at ON items(created_at);
 
+-- Create index on email for faster login lookups
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+
 -- Insert some sample data
-INSERT INTO users (id) VALUES
-    ('11111111-1111-1111-1111-111111111111')
-ON CONFLICT DO NOTHING; 
+INSERT INTO users (id, full_name, email, password_hash) VALUES
+    ('11111111-1111-1111-1111-111111111111', 'Demo User', 'demo@example.com', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4tbQJgHqK2')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO items (purchase_date, user_id, store, amount, category) VALUES
     ('2025-06-18', '11111111-1111-1111-1111-111111111111', 'Best Buy', 999.99, 'Electronics'),

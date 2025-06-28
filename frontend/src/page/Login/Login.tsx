@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -12,17 +13,26 @@ import {
 import AppInformation from '../../components/AppInformation/AppInformation';
 import SignUp from '../../components/SignUp/SignUp';
 import SignIn from '../../components/SignIn/SignIn';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
     const [isLogin, setIsLogin] = useState(true);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const { login } = useAuth();
 
     const toggleMode = () => {
         setIsLogin(!isLogin);
     };
 
+    const handleSuccessfulAuth = () => {
+        login();
+        navigate('/');
+    };
+
     function handleGoogleLogin(event: any): void {
-        throw new Error('Function not implemented.');
+        // Implement Google login logic here
+        console.log('Google login clicked');
     }
 
     return (
@@ -75,7 +85,10 @@ const Login = () => {
                     </Typography>
                 </Box>
 
-                {isLogin ? <SignIn loading={loading} setLoading={setLoading} /> : <SignUp loading={loading} setLoading={setLoading} />}
+                {isLogin ? 
+                    <SignIn loading={loading} setLoading={setLoading} onSuccess={handleSuccessfulAuth} /> : 
+                    <SignUp loading={loading} setLoading={setLoading} onSuccess={handleSuccessfulAuth} />
+                }
 
                 <Divider sx={{ my: 2 }}>
                     <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
