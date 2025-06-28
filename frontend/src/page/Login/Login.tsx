@@ -30,117 +30,119 @@ const Login = () => {
         navigate('/');
     };
 
-    function handleGoogleLogin(event: any): void {
+    function handleGoogleLogin(): void {
         // Implement Google login logic here
         console.log('Google login clicked');
     }
 
     return (
         <Box sx={{ 
-        height: '100%', 
-        display: 'flex',
-        }}>
-        {/* Left Side - App Description */}
-        <AppInformation />
-
-        {/* Right Side - Login Form */}
-        <Box sx={{
+            height: '100%', 
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            p: 2
+            justifyContent: "center",
+            gap: 8
         }}>
-            <Paper 
-            elevation={24}
-            sx={{
-                p: 3,
-                borderRadius: 2,
-                width: '100%',
-                maxWidth: 350,
-                background: 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}
-            >
-                <Box sx={{ textAlign: 'center', mb: 2 }}>
-                    <Typography 
-                    variant="h5" 
-                    component="h1" 
-                    sx={{ 
-                        fontWeight: 700, 
-                        color: '#2c3e50',
-                        mb: 0.5
-                    }}
-                    >
-                    Budgetor
-                    </Typography>
-                    <Typography 
-                    variant="body2" 
-                    sx={{ 
-                        color: '#7f8c8d',
-                        fontWeight: 500
-                    }}
-                    >
-                    {isLogin ? 'Welcome back!' : 'Create your account'}
-                    </Typography>
-                </Box>
+            {/* Left Side - App Description */}
+            <AppInformation />
 
-                {isLogin ? 
-                    <SignIn loading={loading} setLoading={setLoading} onSuccess={handleSuccessfulAuth} /> : 
-                    <SignUp loading={loading} setLoading={setLoading} onSuccess={handleSuccessfulAuth} />
-                }
-
-                <Divider sx={{ my: 2 }}>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                    OR
-                    </Typography>
-                </Divider>
-
-                <Button
-                    fullWidth
-                    variant="outlined"
-                    startIcon={<GoogleIcon />}
-                    onClick={handleGoogleLogin}
-                    disabled={loading}
-                    size="small"
+            {/* Right Side - Login Form */}
+            <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                p: 2
+            }}>
+                <Paper 
+                    elevation={24}
                     sx={{
-                    py: 1,
-                    mb: 2,
-                    borderColor: '#db4437',
-                    color: '#db4437',
-                    '&:hover': {
-                        borderColor: '#c23321',
-                        backgroundColor: 'rgba(219, 68, 55, 0.04)',
-                    },
-                    fontWeight: 600
+                        p: 3,
+                        borderRadius: 2,
+                        width: '100%',
+                        maxWidth: 350,
+                        background: 'rgba(255, 255, 255, 0.95)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)'
                     }}
                 >
-                    Continue with Google
-                </Button>
+                    <Box sx={{ textAlign: 'center', mb: 2 }}>
+                        <Typography 
+                            variant="h5" 
+                            component="h1" 
+                            sx={{ 
+                                fontWeight: 700, 
+                                color: '#2c3e50',
+                                mb: 0.5
+                            }}
+                        >
+                            Budgetor
+                        </Typography>
+                        <Typography 
+                            variant="body2" 
+                            sx={{ 
+                                color: '#7f8c8d',
+                                fontWeight: 500
+                            }}
+                        >
+                            {isLogin ? 'Welcome back!' : 'Create your account'}
+                        </Typography>
+                    </Box>
 
-                <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                    {isLogin ? "Don't have an account? " : "Already have an account? "}
+                    {isLogin ? 
+                        <SignIn loading={loading} setLoading={setLoading} onSuccess={handleSuccessfulAuth} /> : 
+                        <SignUp loading={loading} setLoading={setLoading} onSuccess={handleSuccessfulAuth} />
+                    }
+
+                    <Divider sx={{ my: 2 }}>
+                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            OR
+                        </Typography>
+                    </Divider>
+
                     <Button
-                        onClick={toggleMode}
+                        fullWidth
+                        variant="outlined"
+                        startIcon={<GoogleIcon />}
+                        onClick={handleGoogleLogin}
+                        disabled={loading}
                         size="small"
                         sx={{
-                        color: '#667eea',
-                        textTransform: 'none',
-                        fontWeight: 600,
-                        fontSize: '0.75rem',
-                        minWidth: 'auto',
-                        p: 0.5,
-                        '&:hover': {
-                            backgroundColor: 'transparent',
-                            textDecoration: 'underline'
-                        }
+                            py: 1,
+                            mb: 2,
+                            borderColor: '#db4437',
+                            color: '#db4437',
+                            '&:hover': {
+                                borderColor: '#c23321',
+                                backgroundColor: 'rgba(219, 68, 55, 0.04)',
+                            },
+                            fontWeight: 600
                         }}
                     >
-                        {isLogin ? 'Sign Up' : 'Sign In'}
+                        Continue with Google
                     </Button>
-                    </Typography>
-                </Box>
+
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            {isLogin ? "Don't have an account? " : "Already have an account? "}
+                            <Button
+                                onClick={toggleMode}
+                                size="small"
+                                sx={{
+                                color: '#667eea',
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                fontSize: '0.75rem',
+                                minWidth: 'auto',
+                                p: 0.5,
+                                '&:hover': {
+                                    backgroundColor: 'transparent',
+                                    textDecoration: 'underline'
+                                }
+                                }}
+                            >
+                                {isLogin ? 'Sign Up' : 'Sign In'}
+                            </Button>
+                        </Typography>
+                    </Box>
                 </Paper>
             </Box>
         </Box>

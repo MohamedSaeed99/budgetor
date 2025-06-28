@@ -1,5 +1,5 @@
 import type { User } from "../../models/User.models";
-import api from "../../config/AxiosConfig";
+import api from "../axios.config"
 
 export const login = async (user: User) => {
     const response = await api.post('/login', user)

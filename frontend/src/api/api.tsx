@@ -1,8 +1,8 @@
-import ItemsAPI from "./ItemsAPI/useItemsQuery"
+import PurchaseAPI from "./PurchaseAPI/usePurchaseQuery"
 import UserAPI from "./UserAPI/useUserQuery";
 
 const api = {
-    Items: ItemsAPI,
+    Purchase: PurchaseAPI,
     User: UserAPI
 }
 

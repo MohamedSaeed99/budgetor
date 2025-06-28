@@ -4,6 +4,7 @@ import {
   Paper
 } from '@mui/material'
 import InputForm from './components/InputForm/InputForm'
+import api from '../../api/api';
 
 export interface Purchase {
   date: string | undefined;
@@ -13,18 +14,28 @@ export interface Purchase {
 }
 
 const PurchaseInformation = ({}) => {
+  const {mutate: addPurchase} = api.Purchase.AddPurchase.useMutation()
+  const {mutate: updatePurchase} = api.Purchase.UpdatePurchase.useMutation();
+  const {mutate: deletePurchase} = api.Purchase.DeletePurchase.useMutation();
+
   const [purchases, setPurchases] = useState<Purchase[]>([]);
 
   const handleAdd = (purchase: Purchase) => {
-    setPurchases([...purchases, purchase]);
+    addPurchase(purchase, {
+      onSuccess: () => setPurchases([...purchases, purchase])
+    })
   };
 
   const handleUpdate = (purchase: Purchase) => {
-    console.log(`update purchase ${purchase}`);
+    updatePurchase(purchase, {
+      onSuccess: () => setPurchases([...purchases, purchase])
+    })
   };
 
   const handleDelete = (purchase: Purchase) => {
-    console.log(`delete purchase ${purchase}`)
+    deletePurchase(purchase, {
+      onSuccess: () => setPurchases([...purchases, purchase])
+    })
   };
 
   return (
