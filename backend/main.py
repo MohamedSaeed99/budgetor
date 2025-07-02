@@ -1,8 +1,7 @@
 import uvicorn
 
 from fastapi import FastAPI
-from routes import item
-from routes import login
+from routes import login, purchase
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -21,7 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(item.router)
+app.include_router(purchase.router)
 app.include_router(login.router)
 
 if __name__ == "__main__":

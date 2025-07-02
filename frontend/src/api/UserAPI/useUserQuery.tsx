@@ -15,18 +15,6 @@ const UserAPI = {
                 mutationFn: (user: User) => register(user),
             })
     },
-    // RefreshToken: {
-    //     useMutation: () =>
-    //         useMutation({
-    //             mutationFn: (token: string) => refreshToken(token),
-    //         })
-    // },
-    // Logout: {
-    //     useMutation: () =>
-    //         useMutation({
-    //             mutationFn: () => logout(),
-    //         })
-    // }
 }
 
 export default UserAPI;

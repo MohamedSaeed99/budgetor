@@ -14,11 +14,12 @@ export interface Purchase {
 }
 
 const PurchaseInformation = ({}) => {
+  const {data} = api.Purchase.GetPurchases.useQuery()
   const {mutate: addPurchase} = api.Purchase.AddPurchase.useMutation()
   const {mutate: updatePurchase} = api.Purchase.UpdatePurchase.useMutation();
   const {mutate: deletePurchase} = api.Purchase.DeletePurchase.useMutation();
 
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [purchases, setPurchases] = useState<Purchase[]>([data]);
 
   const handleAdd = (purchase: Purchase) => {
     addPurchase(purchase, {
