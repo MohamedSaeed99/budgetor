@@ -2,7 +2,6 @@ import { Button, Toolbar, Typography } from "@mui/material"
 import { useAuth } from "../../context/AuthContext"
 import { useNavigate } from "react-router-dom"
 
-
 const Header = () => {
     const { logout } = useAuth()
     const navigate = useNavigate()
@@ -19,7 +18,9 @@ const Header = () => {
             justifyContent: "space-between", 
             alignContent:"center", 
             borderBottom: "1px solid black",  
-            backdropFilter: 'blur(10px)'
+            backdropFilter: 'blur(10px)',
+            zIndex: 10,
+            position: 'relative'
         }}>
             <Typography>Budgetor</Typography>
             <Button onClick={handleLogout}>Logout</Button>

@@ -25,7 +25,7 @@ const PurchaseAPI = {
     DeletePurchase: {
         useMutation: () =>
             useMutation({
-                mutationFn: (purchase: Purchase) => deletePurchase(purchase),
+                mutationFn: (purchaseId: string) => deletePurchase(purchaseId),
             })
     }
 }

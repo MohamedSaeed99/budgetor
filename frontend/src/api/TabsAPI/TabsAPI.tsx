@@ -16,7 +16,7 @@ export const updateTab = async (tab: Tab) => {
     return response.data;
 };
 
-export const deleteTab = async (tab: Tab) => {
-    const response = await api.delete('/tab', tab);
+export const deleteTab = async (tabId: string) => {
+    const response = await api.delete(`/tab/${tabId}`);
     return response.data;
 };

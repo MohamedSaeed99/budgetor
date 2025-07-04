@@ -16,7 +16,7 @@ export const updatePurchase = async (purchase: Purchase) => {
     return response.data;
 };
 
-export const deletePurchase = async (purchase: Purchase) => {
-    const response = await api.delete('/purchase', purchase);
+export const deletePurchase = async (purchaseId: string) => {
+    const response = await api.delete(`/purchase/${purchaseId}`);
     return response.data;
 };

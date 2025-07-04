@@ -25,7 +25,7 @@ const TabsAPI = {
     DeleteTab: {
         useMutation: () =>
             useMutation({
-                mutationFn: (tab: Tab) => deleteTab(tab),
+                mutationFn: (tabId: string) => deleteTab(tabId),
             })
     }
 }
