@@ -33,18 +33,29 @@ const InputField = styled(TextField)({
     }
 })
 
+const convertToCurrencyAmount = (amount: number | undefined) => {
+    if (amount === undefined) return '';
+    else
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(amount);
+}
+
 const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }: InputFormProps) => {
-    const [displayAmount, setDisplayAmount] = useState<string>("")
+    const [displayAmount, setDisplayAmount] = useState<string>(convertToCurrencyAmount(availablePurchase?.amount))
     const [isDateFieldFocus, setIsDateFieldFocus] = useState<boolean>(false);
     const [purchase, setPurchase] = useState<Purchase>(availablePurchase ?? {
-        date: undefined,
+        purchase_date: undefined,
         store: "",
         amount: undefined,
         category: ""
     } as Purchase);
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setPurchase({...purchase, date: event.target.value});
+        setPurchase({...purchase, purchase_date: event.target.value});
     }
 
     const handleCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,24 +68,13 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
         setPurchase({...purchase, amount: amount ? parseFloat(amount) : undefined});
     }
 
-    const convertToCurrencyAmount = () => {
-        if (purchase.amount === undefined) setDisplayAmount('');
-        else
-            setDisplayAmount(new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }).format(purchase.amount!));
-    }
-
     const handleStoreChange = (event: React.ChangeEvent<HTMLInputElement>) =>{
         setPurchase({...purchase, store: event.target.value});
     }
 
     const handleClear = () => {
         setPurchase({
-            date: undefined,
+            purchase_date: undefined,
             store: "",
             amount: undefined,
             category: ""
@@ -82,7 +82,7 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
     }
 
     const dateExists = () => {
-        return purchase.date !== undefined && purchase.date !== "";
+        return purchase.purchase_date !== undefined && purchase.purchase_date !== "";
     }
 
     return (
@@ -93,7 +93,8 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
                     label="Date" 
                     name="date" 
                     type={dateExists() || isDateFieldFocus ? "date" : "text"} 
-                    value={purchase.date} onChange={handleDateChange}
+                    value={purchase.purchase_date} 
+                    onChange={handleDateChange}
                     onFocus={() => setIsDateFieldFocus(true)}
                     onBlur={() => setIsDateFieldFocus(false)} />
                 <InputField sx={{width: '150px'}} label="Store" name="store" value={purchase.store} onChange={handleStoreChange} />
@@ -105,7 +106,7 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
                     value={displayAmount} 
                     onChange={handleAmountChange}
                     onFocus={() => setDisplayAmount(purchase.amount?.toString() ?? "")}
-                    onBlur={convertToCurrencyAmount}
+                    onBlur={() => setDisplayAmount(convertToCurrencyAmount(purchase.amount))}
                 />
                 <InputField sx={{width: '150px'}} label="Category" name="category" value={purchase.category} onChange={handleCategoryChange} />
             </Grid>

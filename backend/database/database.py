@@ -7,6 +7,10 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# call it in any place of your program
+# before working with UUID objects in PostgreSQL
+psycopg2.extras.register_uuid()
+
 # Database configuration from environment variables
 DB_CONFIG = {
     'database': os.getenv('DB_NAME', 'budgetor'),
@@ -58,14 +62,15 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False):
     try:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         cursor.execute(query, params)
-        
+        result = None
         if fetch_one:
             result = cursor.fetchone()
         elif fetch_all:
             result = cursor.fetchall()
-        else:
-            conn.commit()
-            result = cursor.rowcount
+            
+        conn.commit()
+        print(f"{cursor.rowcount} row(s) updated.")
+
         
         cursor.close()
         return result

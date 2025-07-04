@@ -10,7 +10,6 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
       const token = localStorage.getItem('access_token');
-      console.log(token)
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -23,7 +22,6 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
     (response) => {
-        console.log("this is another test")
         return response;
     },
     async (error) => {
