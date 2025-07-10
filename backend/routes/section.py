@@ -9,7 +9,7 @@ router = APIRouter(
 )
     
 @router.get("/")
-async def get_sections(authorization: str = Header(...)):
+async def get_sections(authorization: str = Header(...)) -> list[Section]:
     user_id = get_user_id_from_token(authorization)
     return section_service.get_sections(user_id)
 

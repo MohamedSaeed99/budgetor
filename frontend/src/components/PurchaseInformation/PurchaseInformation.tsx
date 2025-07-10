@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Box,
   Container,
@@ -8,6 +7,7 @@ import InputForm from './components/InputForm/InputForm'
 import api from '../../api/api';
 
 export interface Purchase {
+  id?: string,
   tab_id: string;
   purchase_date: string | undefined;
   store: string;
@@ -32,19 +32,23 @@ const PurchaseInformation = ({}) => {
   };
 
   const handleDelete = (purchase: Purchase) => {
-    deletePurchase(purchase)
+    deletePurchase(purchase.id!)
   };
 
   return (
-    <Container sx={{ p: 2, ml: 0, px: 0 }}>
+    <Container sx={{ p: 2, ml: 0, px: 0, height: "100%" }}>
         <Paper 
           variant='outlined'
           sx={{
-            padding:2,
+            paddingLeft: 2,
+            paddingBottom: 1.5,
+            paddingTop: 2,
             width: "100%",
+            height: "100%",
             display: "flex",
             flexDirection: "column",
-            gap: 1
+            gap: 1.5,
+            overflowY: "auto",
           }}
         >
           {isLoading ?

@@ -1,16 +1,10 @@
 import { Container } from "@mui/material";
-import Tab from "./components/Tab/Tab";
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import api from "../../api/api";
+import Tabs from "./components/Tab/Tab";
 
 const Footer = () => {
-    const {data: tabs} = api.Tabs.GetTabs.useQuery()
-
-
     return (
-        <Container sx={{display: "flex", justifyContent: "flex-start", alignContent: "center", gap: 1}}>
-            <Tab />
-            <AddRoundedIcon />
+        <Container sx={{height:"100%", width: "100%", display: "flex", justifyContent: "flex-start", alignContent: "center", gap: 1, backgroundColor: "white"}}>
+            <Tabs />
         </Container>
     )
 }

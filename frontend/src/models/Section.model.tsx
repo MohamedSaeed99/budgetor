@@ -2,5 +2,5 @@
 
 export type Section = {
     id?: string,
-    name: string
+    section_name: string
 }

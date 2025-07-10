@@ -8,17 +8,21 @@ import Drawer from '../../components/Drawer/Drawer'
 const Home = () => {
   return (
     <Box sx={{height: "100vh", width: "100vw", display: "flex", flexDirection: "column"}}>
-      <Header />
+      <Box sx={{
+        height: "40px",
+        width: "100%"
+      }}>
+        <Header />
+      </Box>
       <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <Drawer />
         <Box sx={{ 
-          flexGrow: 1, 
           display: 'flex', 
           flexDirection: 'column',
           width: '100%'
         }}>
-          <Grid sx={{height: "calc(100% - 37px)", width: "100%"}} container spacing={2}>
-            <Grid>
+          <Grid sx={{height: "calc(100% - 20px)", width: "100%"}} container spacing={2}>
+            <Grid sx={{height: "100%"}}>
               <PurchaseInformation/>
             </Grid>
             <Grid sx={{height: "100%"}} size="grow">
@@ -30,13 +34,14 @@ const Home = () => {
               </Stack>
             </Grid>
           </Grid>
-          <Box sx={{
-            height: "35px",
-            borderTop: "1px solid black"
-          }}>
-            <Footer />
-          </Box>
         </Box>
+      </Box>
+      <Box sx={{
+        height: "40px",
+        width: "100%",
+        borderTop: "1px solid black"
+      }}>
+        <Footer />
       </Box>
     </Box>
   )

@@ -6,10 +6,10 @@ class Section(BaseModel):
     id: Optional[uuid.UUID] = None
     section_name: str
 
-    def to_entity(self) -> 'SectionEntity':
+    def to_entity(self, user_id: str) -> 'SectionEntity':
         return SectionEntity(
             id=self.id,
-            user_id=self.user_id,
+            user_id=user_id,
             section_name=self.section_name
         )
 

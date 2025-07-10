@@ -4,6 +4,9 @@ import api from '../../api/api';
 import { useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add';
+import TextInput from '../TextInput/TextInput';
+import type { Section } from '../../models/Section.model';
+import { useUserLocation } from '../../context/UserLocation';
 
 const drawerWidth = 200;
 const miniDrawerWidth = 40;
@@ -22,21 +25,21 @@ const StyledDrawer = styled(MuiDrawer)(() => ({
 }));
 
 const Drawer = () => {
+    const {updateSectionLocation} = useUserLocation();
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [isAddingSection, setIsAddingSection] = useState(false);
     const {data: sections} = api.Section.GetSections.useQuery()
-    const [addSection, setAddSection] = useState(false);
-    const [sectionName, setSectionName] = useState('');
+    const {mutate: addSection} = api.Section.AddSection.useMutation()
+    const {mutate: updateSection} = api.Section.UpdateSection.useMutation()
+    const {mutate: deleteSection} = api.Section.DeleteSection.useMutation()
     
     const handleDrawerToggle = () => {
         setDrawerOpen(!drawerOpen);
     };
 
-    const handleAddSection = () => {
-        if (sectionName.trim()) {
-            // TODO: Add section API call
-            setSectionName('');
-            setAddSection(false);
-        }
+    const handleAddSection = (name: string) => {
+        addSection({ section_name: name } as Section)
+        setIsAddingSection(false);
     };
 
     return (
@@ -73,39 +76,41 @@ const Drawer = () => {
                 <Box sx={{ flex: 1 }}>
                     <List sx={{ pt: 1 }}>
                         {sections?.map((section, index) => (
-                            <ListItem key={index} disablePadding>
-                                <ListItemButton sx={{ 
-                                    minHeight: '48px',
-                                    px: drawerOpen ? 2 : 1,
-                                    justifyContent: drawerOpen ? 'flex-start' : 'center'
-                                }}>
-                                    {!drawerOpen && (
-                                        <ListItemIcon sx={{ minWidth: 'auto' }}>
-                                            <Box sx={{ 
-                                                width: '8px', 
-                                                height: '8px', 
-                                                borderRadius: '50%', 
-                                                bgcolor: 'primary.main' 
-                                            }} />
-                                        </ListItemIcon>
-                                    )}
-                                    {drawerOpen && <ListItemText primary={section.name} />}
-                                </ListItemButton>
-                            </ListItem>
+                            <ListItemButton sx={{ 
+                                minHeight: '48px',
+                                px: drawerOpen ? 2 : 1,
+                                justifyContent: drawerOpen ? 'flex-start' : 'center'
+                            }}
+                            onClick={() => updateSectionLocation(section.id)}
+                            >
+                                {!drawerOpen && (
+                                    <ListItemIcon sx={{ minWidth: 'auto' }}>
+                                        <Box sx={{ 
+                                            width: '8px', 
+                                            height: '8px', 
+                                            borderRadius: '50%', 
+                                            bgcolor: 'primary.main' 
+                                        }} />
+                                    </ListItemIcon>
+                                )}
+                                {drawerOpen && <ListItemText primary={section.section_name} />}
+                            </ListItemButton>
                         ))}
                         
                         {/* Add Section Input */}
-                        {addSection && drawerOpen && (
+                        {isAddingSection && drawerOpen && (
                             <ListItem disablePadding>
                                 <Box sx={{ p: 1, width: '100%' }}>
-                                    <TextField 
-                                        value={sectionName} 
-                                        onChange={(e) => setSectionName(e.target.value)}
-                                        placeholder="Section name"
-                                        size="small"
-                                        fullWidth
-                                        onKeyDown={(e) => e.key === 'Enter' && handleAddSection()}
-                                        autoFocus
+                                    <TextInput 
+                                        placeholder='Section name' 
+                                        handleSave={handleAddSection} 
+                                        sx={{
+                                            height: "30px",
+                                            padding: "4px"
+                                        }} 
+                                        handleCancel={function (): void {
+                                            throw new Error('Function not implemented.');
+                                        } } 
                                     />
                                 </Box>
                             </ListItem>
@@ -120,7 +125,7 @@ const Drawer = () => {
                 }}>
                     {drawerOpen ? (
                         <Button 
-                            onClick={() => setAddSection(true)}
+                            onClick={() => setIsAddingSection(true)}
                             startIcon={<AddIcon />}
                             fullWidth
                             variant="outlined"
@@ -130,7 +135,7 @@ const Drawer = () => {
                         </Button>
                     ) : (
                         <IconButton
-                            onClick={() => setAddSection(true)}
+                            onClick={() => setIsAddingSection(true)}
                             sx={{ 
                                 width: '100%',
                                 display: 'flex',

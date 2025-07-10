@@ -12,15 +12,13 @@ const Header = () => {
     }
     
     return (
-        <Toolbar sx={{ 
-            minHeight: "40px !important",
+        <Toolbar sx={{
+            minHeight: "unset !important",
+            height: "100%",
             display: "flex", 
             justifyContent: "space-between", 
             alignContent:"center", 
             borderBottom: "1px solid black",  
-            backdropFilter: 'blur(10px)',
-            zIndex: 10,
-            position: 'relative'
         }}>
             <Typography>Budgetor</Typography>
             <Button onClick={handleLogout}>Logout</Button>

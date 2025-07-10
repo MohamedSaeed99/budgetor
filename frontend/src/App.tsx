@@ -3,6 +3,7 @@ import { Box } from '@mui/material'
 import Login from './page/Login/Login'
 import Home from './page/Home/Home'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { UserLocationProvider } from './context/UserLocation'
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth()
@@ -31,7 +32,9 @@ const App = () => {
   return (
     <AuthProvider>
       <Router>
-        <AppRoutes />
+        <UserLocationProvider>
+          <AppRoutes />
+        </UserLocationProvider>
       </Router>
     </AuthProvider>
   )
