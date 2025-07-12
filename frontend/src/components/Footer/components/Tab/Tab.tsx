@@ -3,20 +3,23 @@ import TextInput from "../../../TextInput/TextInput";
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import api from "../../../../api/api";
 import { useState } from "react";
+import { useUserLocation } from "../../../../context/UserLocation";
+import type { Tab } from "../../../../models/Tab.model";
 
 const Tabs = () => {
+    const { section } = useUserLocation();
+    const [displayTabField, setDisplayTabField] = useState(false);
     const {data: tabs} = api.Tabs.GetTabs.useQuery()
     const {mutate: addTab} = api.Tabs.AddTab.useMutation()
     const {mutate: updateTab} = api.Tabs.UpdateTab.useMutation()
     const {mutate: deleteTab} = api.Tabs.DeleteTab.useMutation()
 
-    const [displayTabField, setDisplayTabField] = useState(false);
 
     const handleSave = (value: string) => {
         addTab({
-            name: value,
-            sectionId: "123"
-        })
+            tab_name: value,
+            section_id: section
+        } as Tab)
         setDisplayTabField(false);
     };
 
@@ -30,7 +33,7 @@ const Tabs = () => {
                 tabs?.map((tab, index) => {
                     return <TextInput
                         key={index}
-                        value={tab.name}
+                        value={tab.tab_name}
                         handleSave={handleSave} 
                         handleCancel={handleCancel}
                         sx={{

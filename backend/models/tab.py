@@ -10,7 +10,7 @@ class Tab(BaseModel):
     def to_entity(self, user_id: str) -> 'TabEntity':
         return TabEntity(
             id=self.id,
-            user_id=self.user_id,
+            user_id=user_id,
             section_id=self.section_id,
             tab_name=self.tab_name
         )
@@ -24,7 +24,6 @@ class TabEntity(BaseModel):
     def to_response(self) -> Tab:
         return Tab(
             id=self.id,
-            user_id=self.user_id,
             section_id=self.section_id,
             tab_name=self.tab_name
         )

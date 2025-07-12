@@ -23,14 +23,16 @@ interface UserLocationProviderProps {
 }
 
 export const UserLocationProvider: React.FC<UserLocationProviderProps> = ({ children }) => {
-  const [section, setSection] = useState<string | undefined>();
-  const [tab, setTab] = useState<string | undefined>();
+  const [section, setSection] = useState<string | undefined>(localStorage.getItem("section") ?? undefined);
+  const [tab, setTab] = useState<string | undefined>(localStorage.getItem("tab") ?? undefined);
 
   const updateSectionLocation = (id: string | undefined) => {
+    localStorage.setItem("section", id ?? "")
     setSection(id)
   }
 
   const updateTabLocation = (id: string | undefined) => {
+    localStorage.setItem("tab", id ?? "")
     setTab(id)
   }
 

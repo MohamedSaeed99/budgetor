@@ -1,4 +1,4 @@
-import { Drawer as MuiDrawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Button, TextField, IconButton, Box, Typography } from '@mui/material';
+import { Drawer as MuiDrawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Button, IconButton, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import api from '../../api/api';
 import { useState } from 'react';
@@ -14,12 +14,11 @@ const miniDrawerWidth = 40;
 const StyledDrawer = styled(MuiDrawer)(() => ({
   transition: 'width 0.2s ease',
   '& .MuiDrawer-paper': {
+    position: 'unset',
     width: "inherit",
     boxSizing: 'border-box',
     borderRight: '1px solid rgba(0, 0, 0, 0.12)',
     backgroundColor: '#fafafa',
-    top: '41px',
-    height: 'calc(100% - 41px)',
     overflow: 'hidden',
   },
 }));
@@ -75,7 +74,7 @@ const Drawer = () => {
                 {/* Sections List */}
                 <Box sx={{ flex: 1 }}>
                     <List sx={{ pt: 1 }}>
-                        {sections?.map((section, index) => (
+                        {sections?.map((section) => (
                             <ListItemButton sx={{ 
                                 minHeight: '48px',
                                 px: drawerOpen ? 2 : 1,

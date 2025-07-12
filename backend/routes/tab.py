@@ -8,10 +8,10 @@ router = APIRouter(
     prefix='/tab'
 )
 
-@router.get("/")
-async def get_tabs(authorization: str = Header(...)):
+@router.get("/{section_id}")
+async def get_tabs(section_id:str, authorization: str = Header(...)):
     user_id = get_user_id_from_token(authorization)
-    return tab_service.get_tabs(user_id)
+    return tab_service.get_tabs(user_id, section_id)
 
 @router.post("/")
 async def create_tab(tab: Tab, authorization: str = Header(...)):

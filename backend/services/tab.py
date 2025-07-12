@@ -1,8 +1,8 @@
 from models.tab import Tab, TabEntity
 import database.repository.tab_repository as repository
 
-def get_tabs(user_id: str):
-    repository.get_tabs(user_id)
+def get_tabs(user_id: str, section_id: str):
+    return [tab.to_response() for tab in repository.get_tabs_by_section(section_id, user_id)]
 
 def create_tab(user_id: str, tab: TabEntity):
     repository.create_tab(tab.to_entity(user_id))
