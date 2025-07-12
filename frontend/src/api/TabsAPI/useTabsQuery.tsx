@@ -1,14 +1,19 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getTabs, addTab, updateTab, deleteTab } from "./TabsAPI";
 import type { Tab } from "../../models/Tab.model";
+import { useUserLocation } from "../../context/UserLocation";
 
 const TabsAPI = {
     GetTabs: {
-        useQuery: () => 
-            useQuery({
-                queryKey: ['tabs'],
-                queryFn: getTabs,
+        useQuery: () => {
+            const { section } = useUserLocation();
+
+            return useQuery({
+                queryKey: ['tabs', section],
+                queryFn: () => getTabs(section ?? ""),
+                enabled: !!section,
             })
+        }
     },
     AddTab: {
         useMutation: () =>

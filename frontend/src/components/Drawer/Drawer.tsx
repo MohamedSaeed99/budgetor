@@ -24,10 +24,10 @@ const StyledDrawer = styled(MuiDrawer)(() => ({
 }));
 
 const Drawer = () => {
-    const {updateSectionLocation} = useUserLocation();
+    const {updateSectionLocation, section: currentSection} = useUserLocation();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [isAddingSection, setIsAddingSection] = useState(false);
-    const {data: sections} = api.Section.GetSections.useQuery()
+    const {data: sections, refetch: refetchSections} = api.Section.GetSections.useQuery()
     const {mutate: addSection} = api.Section.AddSection.useMutation()
     const {mutate: updateSection} = api.Section.UpdateSection.useMutation()
     const {mutate: deleteSection} = api.Section.DeleteSection.useMutation()
@@ -37,7 +37,11 @@ const Drawer = () => {
     };
 
     const handleAddSection = (name: string) => {
-        addSection({ section_name: name } as Section)
+        addSection({ section_name: name } as Section, {
+            onSuccess: () => {
+                refetchSections()
+            }
+        })
         setIsAddingSection(false);
     };
 
@@ -75,21 +79,19 @@ const Drawer = () => {
                 <Box sx={{ flex: 1 }}>
                     <List sx={{ pt: 1 }}>
                         {sections?.map((section) => (
-                            <ListItemButton sx={{ 
-                                minHeight: '48px',
-                                px: drawerOpen ? 2 : 1,
-                                justifyContent: drawerOpen ? 'flex-start' : 'center'
-                            }}
-                            onClick={() => updateSectionLocation(section.id)}
+                            <ListItemButton 
+                                key={section.id}
+                                    sx={{ 
+                                    minHeight: '48px',
+                                    px: drawerOpen ? 2 : 1,
+                                    justifyContent: drawerOpen ? 'flex-start' : 'center'
+                                    }}
+                                onClick={() => updateSectionLocation(section.id)}
+                                selected={section.id === currentSection}
                             >
                                 {!drawerOpen && (
                                     <ListItemIcon sx={{ minWidth: 'auto' }}>
-                                        <Box sx={{ 
-                                            width: '8px', 
-                                            height: '8px', 
-                                            borderRadius: '50%', 
-                                            bgcolor: 'primary.main' 
-                                        }} />
+                                        <Box sx={{ width: '8px', height: '8px', borderRadius: '50%', bgcolor: 'primary.main' }} />
                                     </ListItemIcon>
                                 )}
                                 {drawerOpen && <ListItemText primary={section.section_name} />}

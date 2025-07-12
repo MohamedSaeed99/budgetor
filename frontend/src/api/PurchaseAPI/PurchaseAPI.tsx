@@ -1,8 +1,8 @@
 import type { Purchase } from "../../components/PurchaseInformation/PurchaseInformation";
 import api from "../axios.config"
 
-export const getPurchases = async (): Promise<Purchase[]> => {
-    const response = await api.get('/purchase');
+export const getPurchases = async (section: string, tab: string): Promise<Purchase[]> => {
+    const response = await api.get(`/purchase?section=${section}&tab=${tab}`);
     return response.data;
 };
 

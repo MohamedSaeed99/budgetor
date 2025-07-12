@@ -1,9 +1,8 @@
 import type { Tab } from "../../models/Tab.model";
 import api from "../axios.config"
 
-export const getTabs = async (): Promise<Tab[]> => {
-    const sectionId = localStorage.getItem("section")
-    const response = await api.get(`/tab/${sectionId}`);
+export const getTabs = async (section: string): Promise<Tab[]> => {
+    const response = await api.get(`/tab/${section}`);
     return response.data;
 };
 
