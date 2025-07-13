@@ -1,9 +1,13 @@
 from database.database import execute_query
 from models.purchase import PurchaseEntity
 
-def get_purchases(user_id: str) -> list[PurchaseEntity]:
-    query = "SELECT * FROM purchases WHERE user_id = %s ORDER BY created_at DESC"
-    results = execute_query(query, (user_id,), fetch_all=True)
+def get_purchases(user_id: str, tab_id: str) -> list[PurchaseEntity]:
+    query = """
+        SELECT * FROM purchases 
+        WHERE user_id = %s AND tab_id = %s 
+        ORDER BY created_at DESC
+    """
+    results = execute_query(query, (user_id, tab_id), fetch_all=True)
     
     if results is None:
         return []

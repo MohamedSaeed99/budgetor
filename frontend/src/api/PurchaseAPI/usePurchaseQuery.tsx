@@ -6,12 +6,12 @@ import { useUserLocation } from "../../context/UserLocation";
 const PurchaseAPI = {
     GetPurchases: {
         useQuery: () => {
-            const {section, tab} = useUserLocation();
+            const {tab} = useUserLocation();
 
             return useQuery({                
-                queryKey: ['purchases', section, tab],
-                queryFn: () => getPurchases(section ?? "", tab ?? ""),
-                enabled: !!section && !!tab,
+                queryKey: ['purchases', tab],
+                queryFn: () => getPurchases(tab ?? ""),
+                enabled: !!tab,
             })
         }
     },

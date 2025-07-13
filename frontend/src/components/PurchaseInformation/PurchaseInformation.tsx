@@ -5,6 +5,7 @@ import {
 } from '@mui/material'
 import InputForm from './components/InputForm/InputForm'
 import api from '../../api/api';
+import { useState } from 'react';
 
 export interface Purchase {
   id?: string,
@@ -16,13 +17,14 @@ export interface Purchase {
 }
 
 const PurchaseInformation = ({}) => {
-  const {data: purchases, isLoading, refetch} = api.Purchase.GetPurchases.useQuery()
-  const {mutate: addPurchase} = api.Purchase.AddPurchase.useMutation()
+  const {data, isLoading, refetch} = api.Purchase.GetPurchases.useQuery();
+  const {mutate: addPurchase} = api.Purchase.AddPurchase.useMutation();
   const {mutate: updatePurchase} = api.Purchase.UpdatePurchase.useMutation();
   const {mutate: deletePurchase} = api.Purchase.DeletePurchase.useMutation();
+  const [purchases, setPurchases] = useState(data)
 
   const handleAdd = (purchase: Purchase) => {
-    addPurchase({...purchase, tab_id: "aaaabbbb-aaaa-bbbb-aaaa-bbbbccccdddd"}, {
+    addPurchase(purchase, {
       onSuccess: () => refetch()
     })
   };

@@ -1,8 +1,8 @@
 import database.repository.purchase_repository as repository
 from models.purchase import Purchase, PurchaseEntity
 
-def get_purchases(user_id: str) -> list[PurchaseEntity]:
-    purchases = [ entity.to_response() for entity in repository.get_purchases(user_id) ]
+def get_purchases(user_id: str, tab_id: str) -> list[PurchaseEntity]:
+    purchases = [ entity.to_response() for entity in repository.get_purchases(user_id, tab_id) ]
     return sorted(purchases, key=lambda purchase: purchase.purchase_date)
 
 def create_purchase(user_id: str, purchase: Purchase):

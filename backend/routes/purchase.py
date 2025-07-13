@@ -7,10 +7,10 @@ router = APIRouter(
     prefix="/purchase"
 )
 
-@router.get("/")
-async def get_purchases(authorization: str = Header(...)):
+@router.get("/{tab_id}")
+async def get_purchases(tab_id: str, authorization: str = Header(...)):
     user_id = get_user_id_from_token(authorization)
-    return purchase_service.get_purchases(user_id)
+    return purchase_service.get_purchases(user_id, tab_id)
 
 @router.post("/")
 async def create_purchase(purchase: Purchase, authorization: str = Header(...)):

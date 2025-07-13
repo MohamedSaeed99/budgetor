@@ -6,6 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ClearIcon from '@mui/icons-material/Clear';
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
+import { useUserLocation } from "../../../../context/UserLocation";
 
 type InputFormProps = {
     availablePurchase?: Purchase;
@@ -45,14 +46,17 @@ const convertToCurrencyAmount = (amount: number | undefined) => {
 }
 
 const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }: InputFormProps) => {
+    console.log(availablePurchase)
+    const {tab} = useUserLocation();
     const [displayAmount, setDisplayAmount] = useState<string>(convertToCurrencyAmount(availablePurchase?.amount))
     const [isDateFieldFocus, setIsDateFieldFocus] = useState<boolean>(false);
     const [purchase, setPurchase] = useState<Purchase>(availablePurchase ?? {
         purchase_date: undefined,
         store: "",
         amount: undefined,
-        category: ""
-    } as Purchase);
+        category: "",
+        tab_id: tab ?? ""
+    });
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPurchase({...purchase, purchase_date: event.target.value});
@@ -73,12 +77,15 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
     }
 
     const handleClear = () => {
+        setIsDateFieldFocus(false)
+        setDisplayAmount("")
         setPurchase({
             purchase_date: undefined,
             store: "",
             amount: undefined,
-            category: ""
-        } as Purchase)
+            category: "",
+            tab_id: tab ?? ""
+        })
     }
 
     const dateExists = () => {
@@ -89,18 +96,17 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
         <Grid container spacing={1} sx={{display: "flex", alignItems: "center"}}>
             <Grid>
                 <InputField 
-                    sx={{width: "100px"}} 
-                    label="Date" 
+                    sx={{width: "100px"}}
                     name="date" 
-                    type={dateExists() || isDateFieldFocus ? "date" : "text"} 
+                    type={"date"} 
                     value={purchase.purchase_date} 
                     onChange={handleDateChange}
                     onFocus={() => setIsDateFieldFocus(true)}
                     onBlur={() => setIsDateFieldFocus(false)} />
-                <InputField sx={{width: '150px'}} label="Store" name="store" value={purchase.store} onChange={handleStoreChange} />
+                <InputField sx={{width: '150px'}} placeholder="Store" name="store" value={purchase.store} onChange={handleStoreChange} />
                 <InputField 
                     sx={{width: '75px'}} 
-                    label="Amount" 
+                    placeholder="Amount" 
                     name="amount" 
                     type="string"
                     value={displayAmount} 
@@ -108,7 +114,7 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
                     onFocus={() => setDisplayAmount(purchase.amount?.toString() ?? "")}
                     onBlur={() => setDisplayAmount(convertToCurrencyAmount(purchase.amount))}
                 />
-                <InputField sx={{width: '150px'}} label="Category" name="category" value={purchase.category} onChange={handleCategoryChange} />
+                <InputField sx={{width: '150px'}} placeholder="Category" name="category" value={purchase.category} onChange={handleCategoryChange} />
             </Grid>
             <Grid display="flex" gap={2}>
                 {handleAdd && <AddIcon sx={{
@@ -117,7 +123,7 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
                         color: "rgba(0, 0, 0, 0.80)",
                         cursor: "pointer"
                     }
-                }} fontSize="small" onClick={() => handleAdd(purchase)}/>}
+                }} fontSize="small" onClick={() => {handleAdd(purchase); handleClear();}}/>}
                 {handleAdd && <ClearIcon sx={{
                     color: "rgba(0, 0, 0, 0.50)",
                     ":hover": {

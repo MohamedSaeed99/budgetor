@@ -1,4 +1,4 @@
-import { TextField, IconButton, InputAdornment, OutlinedInput, type SxProps } from "@mui/material";
+import { IconButton, InputAdornment, OutlinedInput, type SxProps } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from "react";
@@ -23,49 +23,49 @@ const TextInput = ({sx, value, placeholder, handleSave, handleCancel}: TextInput
     };
     return (
         <OutlinedInput
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder={placeholder}
-                fullWidth
-                autoFocus
-                size="small"
-                sx={{
-                    fontSize: '14px',
-                    padding: "0",
-                    "& .MuiInputBase-input": {
-                        paddingLeft: "4px"
-                    },
-                    ...(sx),
-                }}
-                endAdornment={
-                    <InputAdornment position="end" sx={{m: 0}}>
-                        <IconButton
-                            size="small"
-                            onClick={() => handleSave(inputValue)}
-                            disabled={!inputValue.trim()}
-                            sx={{ 
-                                color: 'primary.main',
-                                '&:hover': { color: 'primary.dark' },
-                                padding: '2px'
-                            }}
-                        >
-                            <AddIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                            size="small"
-                            onClick={handleCancel}
-                            sx={{ 
-                                color: 'error.main',
-                                '&:hover': { color: 'error.dark' },
-                                padding: '2px'
-                            }}
-                        >
-                            <CloseIcon fontSize="small" />
-                        </IconButton>
-                    </InputAdornment>   
-                }
-            />
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyPress}
+            placeholder={placeholder}
+            fullWidth
+            autoFocus
+            size="small"
+            sx={{
+                fontSize: '14px',
+                padding: "0",
+                "& .MuiInputBase-input": {
+                    paddingLeft: "4px"
+                },
+                ...(sx),
+            }}
+            endAdornment={
+                <InputAdornment position="end" sx={{m: 0}}>
+                    <IconButton
+                        size="small"
+                        onClick={() => handleSave(inputValue)}
+                        disabled={!inputValue.trim()}
+                        sx={{ 
+                            color: 'primary.main',
+                            '&:hover': { color: 'primary.dark' },
+                            padding: '2px'
+                        }}
+                    >
+                        <AddIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                        size="small"
+                        onClick={handleCancel}
+                        sx={{ 
+                            color: 'error.main',
+                            '&:hover': { color: 'error.dark' },
+                            padding: '2px'
+                        }}
+                    >
+                        <CloseIcon fontSize="small" />
+                    </IconButton>
+                </InputAdornment>   
+            }
+        />
     )
 }
 
