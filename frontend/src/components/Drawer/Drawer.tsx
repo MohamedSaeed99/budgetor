@@ -85,24 +85,17 @@ const Drawer = () => {
 
                 {/* Sections List */}
                 <Box sx={{ flex: 1 }}>
-                    <List sx={{ pt: 1 }}>
+                    <List>
                         {sections?.map((section) => (
-                            <ListItemButton 
-                                key={section.id}
-                                    sx={{ 
-                                    minHeight: '48px',
-                                    px: drawerOpen ? 2 : 1,
-                                    justifyContent: drawerOpen ? 'flex-start' : 'center'
-                                    }}
-                                onClick={() => updateSectionLocation(section.id)}
-                                selected={section.id === currentSection}
-                            >
+                            <Box sx={{pt: 0.5, pb: 0.5, pl: 1, pr: 1}}>
                                 {!drawerOpen && (
                                     <ListItemIcon sx={{ minWidth: 'auto' }}>
                                         <Box sx={{ width: '8px', height: '8px', borderRadius: '50%', bgcolor: 'primary.main' }} />
                                     </ListItemIcon>
                                 )}
                                 {drawerOpen && <TextInput 
+                                        handleOnClick={() => updateSectionLocation(section.id)}
+                                        selected={section.id === currentSection}
                                         editing={false}
                                         value={section.section_name}
                                         handleSave={handleUpdateSection}
@@ -113,14 +106,14 @@ const Drawer = () => {
                                         handleCancel={() =>{}} 
                                     />
                                 }
-                            </ListItemButton>
+                            </Box>
                         ))}
                         
                         {/* Add Section Input */}
                         {isAddingSection && drawerOpen && (
                             <ListItem disablePadding>
-                                <Box sx={{ p: 1, width: '100%' }}>
-                                    <TextInput 
+                                <Box sx={{pt: 0.5, pb: 0.5, pl: 1, pr: 1, width: '100%' }}>
+                                    <TextInput
                                         editing={true}
                                         placeholder='Section name' 
                                         handleSave={handleAddSection}

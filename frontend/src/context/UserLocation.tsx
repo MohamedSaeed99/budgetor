@@ -22,17 +22,40 @@ interface UserLocationProviderProps {
   children: ReactNode
 }
 
+interface Tabs {
+  [key: string]: string;
+}
+
+
+const fetchTab = () => {
+  const tabs = localStorage.getItem("tab")
+  const section = localStorage.getItem("section")
+  const parsedObject: Tabs = tabs ? JSON.parse(tabs) : {}
+  return section ? parsedObject[section] : ""
+}
+
 export const UserLocationProvider: React.FC<UserLocationProviderProps> = ({ children }) => {
-  const [section, setSection] = useState<string | undefined>(localStorage.getItem("section") ?? undefined);
-  const [tab, setTab] = useState<string | undefined>(localStorage.getItem("tab") ?? undefined);
+  const [section, setSection] = useState<string>(localStorage.getItem("section") ?? "");
+  const [tab, setTab] = useState<string>(fetchTab());
 
   const updateSectionLocation = (id: string | undefined) => {
+    if (id === undefined) return
+
+    const tabObject = JSON.parse(localStorage.getItem("tab") ?? "")
+
     localStorage.setItem("section", id ?? "")
     setSection(id)
+    setTab(tabObject[id])
   }
 
   const updateTabLocation = (id: string | undefined) => {
-    localStorage.setItem("tab", id ?? "")
+    if (id === undefined) return
+
+    const tabs = localStorage.getItem("tab")
+    const parsedObject: Tabs = tabs ? JSON.parse(tabs) : {}
+    parsedObject[section] = id
+
+    localStorage.setItem("tab", JSON.stringify(parsedObject))
     setTab(id)
   }
 

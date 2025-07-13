@@ -1,18 +1,21 @@
-import { Button, IconButton, InputAdornment, OutlinedInput, type SxProps } from "@mui/material";
+import { Box, Button, IconButton, InputAdornment, OutlinedInput, Typography, type SxProps } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import { useState } from "react";
 
 type TextInputProps = {
     sx: SxProps,
     editing: boolean,
+    selected?: boolean,
     value?: string,
     placeholder?: string,
     handleSave: (value: string) => void,
-    handleCancel: () => void
+    handleCancel: () => void,
+    handleOnClick?: () => void,
 }
 
-const TextInput = ({sx, editing, value, placeholder, handleSave, handleCancel}: TextInputProps) => {
+const TextInput = ({sx, selected, editing, value, placeholder, handleSave, handleCancel, handleOnClick}: TextInputProps) => {
     const [inputValue, setInputValue] = useState(value ?? "");
     const [isEditing, setIsEditing] = useState<boolean>(editing ?? true)
 
@@ -81,20 +84,36 @@ const TextInput = ({sx, editing, value, placeholder, handleSave, handleCancel}: 
             }
         />
         :
-        <Button
-            variant={"outlined"}
-            size={"small"}
+        <Box
             sx={{
+                p: "0 4px",
+                border: "0.5px solid rgba(0, 0, 0, 0.87)",
+                borderRadius: "4px",
+                bgcolor: selected ? "lightblue" : "unset",
                 textTransform: 'none',
-                justifyContent: 'flex-start',
-                minWidth: '80px',
-                height: '32px',
-                fontSize: '12px'
+                display: "flex",
+                ...(sx)
             }}
-            onDoubleClick={() => setIsEditing(true)}
         >
-            {value}
-        </Button>
+            <Typography 
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    height: "100%",
+                    verticalAlign: "center",
+                    width:"100%", 
+                    ':hover': {
+                    cursor: "pointer"
+                }}}
+                onClick={handleOnClick}
+                onDoubleClick={() => setIsEditing(true)}
+            >
+                {value}
+            </Typography>
+            <IconButton sx={{zIndex: 1, padding: '0px'}}>
+                <DeleteOutlineRoundedIcon onClick={() => console.log("test")} />
+            </IconButton>
+        </Box>
     )
 }
 
