@@ -37,13 +37,21 @@ const Drawer = () => {
     };
 
     const handleAddSection = (name: string) => {
-        addSection({ section_name: name } as Section, {
+        addSection({ section_name: name }, {
             onSuccess: () => {
                 refetchSections()
             }
         })
         setIsAddingSection(false);
     };
+
+    const handleUpdateSection = (name: string) => {
+        updateSection({ section_name: name }, {
+            onSuccess: () => {
+                refetchSections()
+            }
+        })
+    }
 
     return (
         <StyledDrawer
@@ -94,7 +102,17 @@ const Drawer = () => {
                                         <Box sx={{ width: '8px', height: '8px', borderRadius: '50%', bgcolor: 'primary.main' }} />
                                     </ListItemIcon>
                                 )}
-                                {drawerOpen && <ListItemText primary={section.section_name} />}
+                                {drawerOpen && <TextInput 
+                                        editing={false}
+                                        value={section.section_name}
+                                        handleSave={handleUpdateSection}
+                                        sx={{
+                                            height: "30px",
+                                            padding: "4px"
+                                        }} 
+                                        handleCancel={() =>{}} 
+                                    />
+                                }
                             </ListItemButton>
                         ))}
                         
@@ -103,15 +121,14 @@ const Drawer = () => {
                             <ListItem disablePadding>
                                 <Box sx={{ p: 1, width: '100%' }}>
                                     <TextInput 
+                                        editing={true}
                                         placeholder='Section name' 
-                                        handleSave={handleAddSection} 
+                                        handleSave={handleAddSection}
                                         sx={{
                                             height: "30px",
                                             padding: "4px"
                                         }} 
-                                        handleCancel={function (): void {
-                                            throw new Error('Function not implemented.');
-                                        } } 
+                                        handleCancel={() => setIsAddingSection(false)} 
                                     />
                                 </Box>
                             </ListItem>

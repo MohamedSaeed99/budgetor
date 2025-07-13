@@ -49,7 +49,6 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
     console.log(availablePurchase)
     const {tab} = useUserLocation();
     const [displayAmount, setDisplayAmount] = useState<string>(convertToCurrencyAmount(availablePurchase?.amount))
-    const [isDateFieldFocus, setIsDateFieldFocus] = useState<boolean>(false);
     const [purchase, setPurchase] = useState<Purchase>(availablePurchase ?? {
         purchase_date: undefined,
         store: "",
@@ -77,7 +76,6 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
     }
 
     const handleClear = () => {
-        setIsDateFieldFocus(false)
         setDisplayAmount("")
         setPurchase({
             purchase_date: undefined,
@@ -88,10 +86,6 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
         })
     }
 
-    const dateExists = () => {
-        return purchase.purchase_date !== undefined && purchase.purchase_date !== "";
-    }
-
     return (
         <Grid container spacing={1} sx={{display: "flex", alignItems: "center"}}>
             <Grid>
@@ -100,9 +94,7 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
                     name="date" 
                     type={"date"} 
                     value={purchase.purchase_date} 
-                    onChange={handleDateChange}
-                    onFocus={() => setIsDateFieldFocus(true)}
-                    onBlur={() => setIsDateFieldFocus(false)} />
+                    onChange={handleDateChange} />
                 <InputField sx={{width: '150px'}} placeholder="Store" name="store" value={purchase.store} onChange={handleStoreChange} />
                 <InputField 
                     sx={{width: '75px'}} 

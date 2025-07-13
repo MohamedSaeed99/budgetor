@@ -32,36 +32,22 @@ const Tabs = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', height: "100%" }}>
             {
                 tabs?.map((tab, index) => {
-                    return editingTab === tab.id ? 
-                        <TextInput
-                            key={index}
-                            value={tab.tab_name}
-                            handleSave={handleSave} 
-                            handleCancel={handleCancel}
-                            sx={{
-                                width: "150px",
-                                height: "25px",
-                            }} />
-                        :
-                        <Button
-                            variant={"outlined"}
-                            size={"small"}
-                            sx={{
-                                textTransform: 'none',
-                                justifyContent: 'flex-start',
-                                minWidth: '80px',
-                                height: '32px',
-                                fontSize: '12px'
-                            }}
-                            onClick={() => updateTabLocation(tab.id)}
-                            onDoubleClick={() => setEditingTab(tab.id)}
-                        >
-                            {tab.tab_name}
-                        </Button>
+                    return <TextInput
+                                editing={false}
+                                key={index}
+                                value={tab.tab_name}
+                                handleSave={handleSave} 
+                                handleCancel={handleCancel}
+                                sx={{
+                                    width: "150px",
+                                    height: "25px",
+                                }} 
+                            />
                 })
             }
             { displayTabField &&
                 <TextInput
+                    editing={true}
                     handleSave={handleSave} 
                     handleCancel={handleCancel}
                     sx={{
