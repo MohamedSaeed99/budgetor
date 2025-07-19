@@ -1,4 +1,4 @@
-import { Grid, Input, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import type { Purchase } from "../../PurchaseInformation";
 import { useState } from "react";
 import { styled } from "@mui/material/styles";
@@ -87,8 +87,8 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
     }
 
     return (
-        <Grid container spacing={1} sx={{display: "flex", alignItems: "center"}}>
-            <Grid>
+        <Box sx={{display: "flex", width: "100%", gap: "4px"}}>
+            <Box sx={{display: "flex", gap: "4px", alignItems: "center"}}>
                 <InputField 
                     sx={{width: "100px"}}
                     name="date" 
@@ -107,8 +107,9 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
                     onBlur={() => setDisplayAmount(convertToCurrencyAmount(purchase.amount))}
                 />
                 <InputField sx={{width: '150px'}} placeholder="Category" name="category" value={purchase.category} onChange={handleCategoryChange} />
-            </Grid>
-            <Grid display="flex" gap={2}>
+            </Box>
+
+            <Box sx={{display: "flex", gap: "4px", alignItems: "center"}}>
                 {handleAdd && <AddIcon sx={{
                     color: "rgba(0, 0, 0, 0.50)",
                     ":hover": {
@@ -137,8 +138,8 @@ const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }:
                         cursor: "pointer"
                     }
                 }} fontSize="small" onClick={() => handleDelete(purchase)}/>}
-            </Grid>
-        </Grid>
+            </Box>
+        </Box>
     )
 }
 

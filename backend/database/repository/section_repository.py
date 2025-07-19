@@ -63,13 +63,6 @@ def update_section(section: SectionEntity) -> SectionEntity:
     )
 
 def delete_section(section_id: str, user_id: str) -> bool:
-    # First check if section has any tabs
-    check_query = "SELECT COUNT(*) FROM tabs WHERE section_id = %s"
-    tab_count = execute_query(check_query, (section_id,), fetch_one=True)
-    
-    if tab_count and tab_count['count'] > 0:
-        return False
-    
     query = "DELETE FROM sections WHERE id = %s AND user_id = %s"
     result = execute_query(query, (section_id, user_id))
     return result is not None and result > 0

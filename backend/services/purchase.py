@@ -10,3 +10,6 @@ def create_purchase(user_id: str, purchase: Purchase):
 
 def update_purchase(user_id: str, purchase: Purchase):
     repository.update_purchase(purchase.to_entity(user_id))
+
+def delete_purchase(user_id: str, purchase_id: str):
+    repository.delete_purchase(purchase_id, user_id)

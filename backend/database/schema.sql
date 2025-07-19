@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS sections (
 );
 
 CREATE TABLE IF NOT EXISTS tabs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid() ON DELETE CASCADE,
     user_id UUID REFERENCES users(id),
     section_id UUID REFERENCES sections(id),
     tab_name VARCHAR(100)
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS tabs (
 
 CREATE TABLE IF NOT EXISTS purchases (
     id SERIAL PRIMARY KEY,
-    tab_id UUID REFERENCES tabs(id),
+    tab_id UUID REFERENCES tabs(id) ON DELETE CASCADE,
     user_id UUID REFERENCES users(id),
     purchase_date TIMESTAMP NOT NULL,
     store VARCHAR(255) NOT NULL,

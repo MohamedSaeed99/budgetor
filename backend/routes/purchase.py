@@ -22,7 +22,7 @@ async def update_purchase(purchase: Purchase, authorization: str = Header(...)):
     user_id = get_user_id_from_token(authorization)
     purchase_service.update_purchase(user_id, purchase)
 
-@router.delete("/")
-async def delete_purchase(purchase: Purchase, authorization: str = Header(...)):
+@router.delete("/{purchase_id}")
+async def delete_purchase(purchase_id: str, authorization: str = Header(...)):
     user_id = get_user_id_from_token(authorization)
-    purchase_service.delete_purchase(user_id, purchase)
+    purchase_service.delete_purchase(user_id, purchase_id)

@@ -23,7 +23,7 @@ async def update_section(section: Section, authorization: str = Header(...)):
     user_id = get_user_id_from_token(authorization)
     section_service.upate_section(user_id, section)
 
-@router.delete("/")
-async def delete_section(authorization: str = Header(...)):
+@router.delete("/{section_id}")
+async def delete_section(section_id: str, authorization: str = Header(...)):
     user_id = get_user_id_from_token(authorization)
-    section_service.delete_section(user_id)
+    section_service.delete_section(user_id, section_id)
