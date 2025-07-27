@@ -21,9 +21,9 @@ async def create_tab(tab: Tab, authorization: str = Header(...)):
 @router.patch("/")
 async def update_tab(tab: Tab, authorization: str = Header(...)):
     user_id = get_user_id_from_token(authorization)
-    tab_service.updateTab(user_id, tab)
+    tab_service.update_tab(user_id, tab)
 
-@router.delete("/")
+@router.delete("/{tab_id}")
 async def delete_tab(tab_id: str, authorization: str = Header(...)):
     user_id = get_user_id_from_token(authorization)
     tab_service.delete_tab(user_id, tab_id)

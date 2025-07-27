@@ -8,6 +8,7 @@ def create_section(user_id: str, section: Section):
     repository.create_section(section.to_entity(user_id))
 
 def upate_section(user_id: str, section: Section):
+    print(section)
     repository.update_section(section.to_entity(user_id))
 
 def delete_section(user_id: str, section_id: str):

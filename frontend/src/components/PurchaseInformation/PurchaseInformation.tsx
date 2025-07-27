@@ -4,7 +4,6 @@ import {
 } from '@mui/material'
 import InputForm from './components/InputForm/InputForm'
 import api from '../../api/api';
-import { useState } from 'react';
 
 export interface Purchase {
     id?: string,

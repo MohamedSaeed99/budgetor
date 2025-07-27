@@ -4,7 +4,7 @@ from datetime import date, datetime
 import uuid
 
 class Purchase(BaseModel):
-    id: Optional[int] = None
+    id: Optional[uuid.UUID] = None
     tab_id: uuid.UUID
     purchase_date: date
     store: str
@@ -23,7 +23,7 @@ class Purchase(BaseModel):
         )
 
 class PurchaseEntity(BaseModel):
-    id: Optional[int] = None
+    id: Optional[uuid.UUID] = None
     user_id: uuid.UUID
     tab_id: uuid.UUID
     purchase_date: date

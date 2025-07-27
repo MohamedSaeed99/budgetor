@@ -70,7 +70,7 @@ def update_tab(tab: TabEntity) -> TabEntity:
     """
     result = execute_query(
         query,
-        (tab.section_id, tab.tab_name, tab.id, tab.user_id, tab.section_id),
+        (tab.tab_name, tab.id, tab.user_id, tab.section_id),
         fetch_one=True
     )
     
@@ -85,13 +85,6 @@ def update_tab(tab: TabEntity) -> TabEntity:
     )
 
 def delete_tab(tab_id: str, user_id: str) -> bool:
-    # First check if tab has any purchases
-    check_query = "SELECT COUNT(*) FROM purchases WHERE tab_id = %s"
-    purchase_count = execute_query(check_query, (tab_id,), fetch_one=True)
-    
-    if purchase_count and purchase_count['count'] > 0:
-        return False
-    
     query = "DELETE FROM tabs WHERE id = %s AND user_id = %s"
     result = execute_query(query, (tab_id, user_id))
     return result is not None and result > 0

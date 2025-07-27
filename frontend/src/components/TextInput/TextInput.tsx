@@ -8,25 +8,31 @@ type TextInputProps = {
     sx: SxProps,
     editing: boolean,
     selected?: boolean,
-    value?: string,
+    object?: {value: string, id: string | undefined},
     placeholder?: string,
     handleSave: (value: string) => void,
     handleCancel: () => void,
     handleOnClick?: () => void,
+    handleDelete: (id: string | undefined) => void
 }
 
-const TextInput = ({sx, selected, editing, value, placeholder, handleSave, handleCancel, handleOnClick}: TextInputProps) => {
-    const [inputValue, setInputValue] = useState(value ?? "");
+const TextInput = ({sx, selected, editing, object, placeholder, handleSave, handleCancel, handleOnClick, handleDelete}: TextInputProps) => {
+    const [inputValue, setInputValue] = useState(object?.value ?? "");
     const [isEditing, setIsEditing] = useState<boolean>(editing ?? true)
 
     const onCancelEvent = () => {
         setIsEditing(false);
-        setInputValue(value ?? "")
+        setInputValue(object?.value ?? "")
         handleCancel();
     }
 
     const onSaveEvent = () => {
-        handleSave(inputValue)
+        handleSave(inputValue);
+        setIsEditing(false);
+    }
+
+    const onDeleteEvent = () => {
+        handleDelete(object?.id)
     }
 
     const handleKeyPress = (event: React.KeyboardEvent) => {
@@ -108,10 +114,10 @@ const TextInput = ({sx, selected, editing, value, placeholder, handleSave, handl
                 onClick={handleOnClick}
                 onDoubleClick={() => setIsEditing(true)}
             >
-                {value}
+                {object?.value}
             </Typography>
             <IconButton sx={{zIndex: 1, padding: '0px'}}>
-                <DeleteOutlineRoundedIcon onClick={() => console.log("test")} />
+                <DeleteOutlineRoundedIcon onClick={onDeleteEvent} />
             </IconButton>
         </Box>
     )

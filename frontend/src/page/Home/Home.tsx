@@ -11,7 +11,7 @@ const Home = () => {
       }}>
         <Header />
       </Box>
-      <Box sx={{ width: "100%", height: "calc(~100% - 40px)", overflow: 'hidden' }}>
+      <Box sx={{ width: "100%"}}>
         <Main />
       </Box>
     </Box>

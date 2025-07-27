@@ -1,4 +1,8 @@
--- Create db tables
+DROP TABLE IF EXISTS purchases;
+DROP TABLE IF EXISTS tabs;
+DROP TABLE IF EXISTS sections;
+DROP TABLE IF EXISTS users;
+
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     full_name VARCHAR(255) NOT NULL,
@@ -15,14 +19,14 @@ CREATE TABLE IF NOT EXISTS sections (
 );
 
 CREATE TABLE IF NOT EXISTS tabs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid() ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id),
-    section_id UUID REFERENCES sections(id),
+    section_id UUID REFERENCES sections(id) ON DELETE CASCADE,
     tab_name VARCHAR(100)
 );
 
 CREATE TABLE IF NOT EXISTS purchases (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tab_id UUID REFERENCES tabs(id) ON DELETE CASCADE,
     user_id UUID REFERENCES users(id),
     purchase_date TIMESTAMP NOT NULL,

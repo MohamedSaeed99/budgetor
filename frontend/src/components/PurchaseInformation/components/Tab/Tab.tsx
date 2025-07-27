@@ -7,21 +7,45 @@ import { useUserLocation } from "../../../../context/UserLocation";
 import type { Tab } from "../../../../models/Tab.model";
 
 const Tabs = () => {
-    const { section, updateTabLocation, tab: currentTab } = useUserLocation();
+    const { section, updateTabLocation, tab: currentTab, deleteTab: deleteTabLocation } = useUserLocation();
     const [displayTabField, setDisplayTabField] = useState(false);
-    const {data: tabs} = api.Tabs.GetTabs.useQuery()
+    const {data: tabs, refetch} = api.Tabs.GetTabs.useQuery()
     const {mutate: addTab} = api.Tabs.AddTab.useMutation()
     const {mutate: updateTab} = api.Tabs.UpdateTab.useMutation()
     const {mutate: deleteTab} = api.Tabs.DeleteTab.useMutation()
 
 
-    const handleSave = (value: string) => {
+    const handleAdd = (value: string) => {
         addTab({
             tab_name: value,
             section_id: section
-        } as Tab)
+        } as Tab, {
+            onSuccess: () => refetch()
+        })
         setDisplayTabField(false);
     };
+
+    const handleUpdate = (id: string | undefined, value: string) => {
+        if(!id) return
+        updateTab({
+            id: id,
+            tab_name: value,
+            section_id: section
+        } as Tab, {
+            onSuccess: () => refetch()
+        })
+        setDisplayTabField(false);
+    };
+
+    const handleDelete = (id: string | undefined) => {
+        if (id === undefined) return
+        deleteTab(id, {
+            onSuccess: () => {
+                refetch()
+                deleteTabLocation(id)
+            }
+        })
+    }
 
     const handleCancel = () => {
         setDisplayTabField(false);
@@ -35,10 +59,11 @@ const Tabs = () => {
                                 selected={tab.id === currentTab}
                                 editing={false}
                                 key={index}
-                                value={tab.tab_name}
-                                handleSave={handleSave} 
+                                object={{value: tab.tab_name, id: tab.id}}
+                                handleSave={(value: string) => handleUpdate(tab.id, value)} 
                                 handleCancel={handleCancel}
                                 handleOnClick={() => updateTabLocation(tab.id)}
+                                handleDelete={handleDelete}
                                 sx={{
                                     width: "150px",
                                     height: "25px",
@@ -49,12 +74,13 @@ const Tabs = () => {
             { displayTabField &&
                 <TextInput
                     editing={true}
-                    handleSave={handleSave} 
+                    handleSave={handleAdd}
                     handleCancel={handleCancel}
                     sx={{
                         width: "150px",
                         height: "25px",
-                    }}  
+                    }} 
+                    handleDelete={(_: string | undefined) => {} }                
                 />
             }
             <AddRoundedIcon onClick={() => setDisplayTabField(true)} />

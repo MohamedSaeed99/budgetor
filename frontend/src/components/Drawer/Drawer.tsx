@@ -23,8 +23,10 @@ const StyledDrawer = styled(MuiDrawer)(() => ({
   },
 }));
 
+
+
 const Drawer = () => {
-    const {updateSectionLocation, section: currentSection} = useUserLocation();
+    const {updateSectionLocation, section: currentSection, deleteSection: deleteLocationSection} = useUserLocation();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [isAddingSection, setIsAddingSection] = useState(false);
     const {data: sections, refetch: refetchSections} = api.Section.GetSections.useQuery()
@@ -45,13 +47,25 @@ const Drawer = () => {
         setIsAddingSection(false);
     };
 
-    const handleUpdateSection = (name: string) => {
-        updateSection({ section_name: name }, {
+    const handleUpdateSection = (id: string | undefined, name: string) => {
+        if(!id) return
+        updateSection({ id: id, section_name: name }, {
             onSuccess: () => {
                 refetchSections()
             }
         })
+        setIsAddingSection(false);
     }
+
+    const handleDeleteSection = (id: string | undefined) => {
+        if (id === undefined) return
+        deleteSection(id, {
+            onSuccess: () => {
+                refetchSections()
+                deleteLocationSection(id)
+            }
+        })
+    } 
 
     return (
         <StyledDrawer
@@ -94,11 +108,12 @@ const Drawer = () => {
                                     </ListItemIcon>
                                 )}
                                 {drawerOpen && <TextInput 
+                                        handleDelete={handleDeleteSection}
                                         handleOnClick={() => updateSectionLocation(section.id)}
                                         selected={section.id === currentSection}
                                         editing={false}
-                                        value={section.section_name}
-                                        handleSave={handleUpdateSection}
+                                        object={{value: section.section_name, id: section.id}}
+                                        handleSave={(value: string) => handleUpdateSection(section.id, value)}
                                         sx={{
                                             height: "30px",
                                             padding: "4px"
@@ -115,13 +130,14 @@ const Drawer = () => {
                                 <Box sx={{pt: 0.5, pb: 0.5, pl: 1, pr: 1, width: '100%' }}>
                                     <TextInput
                                         editing={true}
-                                        placeholder='Section name' 
+                                        placeholder='Section name'
                                         handleSave={handleAddSection}
                                         sx={{
                                             height: "30px",
                                             padding: "4px"
-                                        }} 
+                                        }}
                                         handleCancel={() => setIsAddingSection(false)} 
+                                        handleDelete={(_: string | undefined) => {}}                                    
                                     />
                                 </Box>
                             </ListItem>

@@ -67,11 +67,10 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False):
             result = cursor.fetchone()
         elif fetch_all:
             result = cursor.fetchall()
-            
-        conn.commit()
-        print(f"{cursor.rowcount} row(s) updated.")
+        else:
+            result = cursor.rowcount
 
-        
+        conn.commit()
         cursor.close()
         return result
     
