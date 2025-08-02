@@ -4,6 +4,7 @@ import {
 } from '@mui/material'
 import InputForm from './components/InputForm/InputForm'
 import api from '../../api/api';
+import { useUserLocation } from '../../context/UserLocation';
 
 export interface Purchase {
     id?: string,
@@ -15,19 +16,20 @@ export interface Purchase {
 }
 
 const PurchaseInformation = ({}) => {
+    const {tab: currentTab} = useUserLocation();
     const {data: purchases, isLoading, isRefetching, refetch} = api.Purchase.GetPurchases.useQuery();
     const {mutate: addPurchase} = api.Purchase.AddPurchase.useMutation();
     const {mutate: updatePurchase} = api.Purchase.UpdatePurchase.useMutation();
     const {mutate: deletePurchase} = api.Purchase.DeletePurchase.useMutation();
 
     const handleAdd = (purchase: Purchase) => {
-        addPurchase(purchase, {
+        addPurchase({...purchase, tab_id: currentTab} as Purchase, {
             onSuccess: () => refetch()
         })
     };
 
     const handleUpdate = (purchase: Purchase) => {
-        updatePurchase(purchase, {
+        updatePurchase({...purchase, tab_id: currentTab} as Purchase, {
             onSuccess: () => refetch()
         })
     };
@@ -43,20 +45,21 @@ const PurchaseInformation = ({}) => {
         <Paper 
             variant='outlined'
             sx={{
+                border: "1px solid red",
+                width: "100%",
                 height: "100%",
+                overflowY: "auto"
             }}
         >
             {isLoading || isRefetching ?
                 <Box>Loading</Box>
             :
             <Box sx={{
+                maxHeight: "100%",
                 padding: "12px",
-                width: "100%",
-                height: "100%",
                 display: "flex",
                 flexDirection: "column",
                 gap: 1.5,
-                overflowY: "auto",
             }}>
                 {purchases?.map((purchase, index) => {
                     return <InputForm key={index}

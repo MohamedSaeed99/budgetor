@@ -1,9 +1,10 @@
-import { Box, Container, Paper, Modal } from "@mui/material"
+import { Box, Container, Paper, Modal, LinearProgress, Typography } from "@mui/material"
 import SpendingPie from "./components/SpendingPie/SpendingPie";
 import AspectRatioRoundedIcon from '@mui/icons-material/AspectRatioRounded';
 import HorizontalBar from "./components/HorizontalBar/HorizontalBar";
 import { useState } from "react";
 import VisualModal from "./components/VisualModal/VisualModal";
+import ProgressBar from "./components/ProgressBar/ProgressBar";
 
 const visuals = {
     "pie": <SpendingPie />,
@@ -12,33 +13,37 @@ const visuals = {
 }
 
 const Visualization = () => {
-    const [open, setOpen] = useState(false);
-
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
-    return (
-        <Container sx={{height:"100%", width:"100%", p: 2, ml: 0, px: 0 }}>
-            <Paper 
-                variant="outlined"   
-                sx={{position: "relative", height:"100%", width:"100%"}}
-            >
-                <Box sx={{zIndex:1000, position: "absolute", top: 10, right: 10}}>
-                    <AspectRatioRoundedIcon onClick={handleOpen} sx={{
-                        color: "rgba(0, 0, 0, 0.50)",
-                        ":hover": {
-                            color: "rgba(0, 0, 0, 0.80)",
-                            cursor: "pointer"
-                        }
-                    }}/>
+    
+    const budgetAmount = 500
+    const amount = 490.0
+    return (<>
+        <Box sx={{
+            border: '1px solid black',
+            borderRadius: "5px",
+            padding: "8px",
+            maxHeight: "100px",
+            display: "flex",
+            gap: "8px",
+            flexDirection: "column",
+        }}>
+            <Box>
+                <Typography>$3500</Typography>
+                <Typography>Total Budget</Typography>
+            </Box>
+            <Box sx={{display: "flex", gap: "24px"}}>
+                <Box sx={{width: "250px"}}>
+                    <Typography>2150</Typography>
+                    <Typography>Spent</Typography>
                 </Box>
-                <Box sx={{height:"100%", width:"100%", display: "flex", justifyContent: "center", alignContent: "center"}}>
-                    {visuals["bar"]}
+                <Box sx={{width: "250px"}}>
+                    <Typography>$1350</Typography>
+                    <Typography>Remaining</Typography>
                 </Box>
-            </Paper>
-            <VisualModal open={open} handleClose={handleClose} />
-        </Container>
-      )
+            </Box>
+        </Box>
+        <ProgressBar amount={amount} budgetAmount={budgetAmount} category="Food"/>
+        </>
+    )
 }
 
 export default Visualization;

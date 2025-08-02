@@ -5,7 +5,7 @@ def get_tabs(user_id: str, section_id: str):
     return [tab.to_response() for tab in repository.get_tabs_by_section(section_id, user_id)]
 
 def create_tab(user_id: str, tab: TabEntity):
-    repository.create_tab(tab.to_entity(user_id))
+    return repository.create_tab(tab.to_entity(user_id)).to_response()
 
 def update_tab(user_id: str, tab: TabEntity):
     repository.update_tab(tab.to_entity(user_id))

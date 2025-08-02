@@ -5,7 +5,7 @@ def get_sections(user_id: str):
     return [section.to_response() for section in repository.get_sections(user_id)]
 
 def create_section(user_id: str, section: Section):
-    repository.create_section(section.to_entity(user_id))
+    return repository.create_section(section.to_entity(user_id)).to_response()
 
 def upate_section(user_id: str, section: Section):
     print(section)

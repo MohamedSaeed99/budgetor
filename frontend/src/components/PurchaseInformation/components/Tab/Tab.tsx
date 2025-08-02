@@ -20,7 +20,11 @@ const Tabs = () => {
             tab_name: value,
             section_id: section
         } as Tab, {
-            onSuccess: () => refetch()
+            onSuccess: (data) => {
+                console.log(data)
+                refetch()
+                updateTabLocation(data.id)
+            }
         })
         setDisplayTabField(false);
     };
@@ -52,7 +56,7 @@ const Tabs = () => {
     };
 
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', height: "100%" }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', height: "100%", margin: "0 8px", gap: "8px" }}>
             {
                 tabs?.map((tab, index) => {
                     return <TextInput

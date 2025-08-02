@@ -4,14 +4,14 @@ import Main from '../../components/Main/Main'
 
 const Home = () => {
   return (
-    <Box sx={{height: "100vh", width: "100vw", display: "flex", flexDirection: "column"}}>
+    <Box sx={{overflow: "hidden", height: "100%", width: "100%", display: "flex", flexDirection: "column"}}>
       <Box sx={{
         height: "40px",
         width: "100%",
       }}>
         <Header />
       </Box>
-      <Box sx={{ width: "100%"}}>
+      <Box sx={{ flex: '1 1 auto'}}>
         <Main />
       </Box>
     </Box>

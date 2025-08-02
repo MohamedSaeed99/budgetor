@@ -19,6 +19,7 @@ async def create_purchase(purchase: Purchase, authorization: str = Header(...)):
 
 @router.patch("/")
 async def update_purchase(purchase: Purchase, authorization: str = Header(...)):
+    print(purchase)
     user_id = get_user_id_from_token(authorization)
     purchase_service.update_purchase(user_id, purchase)
 

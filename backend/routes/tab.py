@@ -16,7 +16,7 @@ async def get_tabs(section_id:str, authorization: str = Header(...)):
 @router.post("/")
 async def create_tab(tab: Tab, authorization: str = Header(...)):
     user_id = get_user_id_from_token(authorization)
-    tab_service.create_tab(user_id, tab)
+    return tab_service.create_tab(user_id, tab)
 
 @router.patch("/")
 async def update_tab(tab: Tab, authorization: str = Header(...)):

@@ -8,15 +8,12 @@ export const getPurchases = async (tab: string): Promise<Purchase[]> => {
 };
 
 export const addPurchase = async (purchase: Purchase) => {
-    console.log("here", purchase)
     const response = await api.post('/purchase', purchase);
     return response.data;
 };
 
 export const updatePurchase = async (purchase: Purchase) => {
-    const {tab} = useUserLocation();
-
-    const response = await api.patch('/purchase', {...purchase, tab_id: tab});
+    const response = await api.patch('/purchase', purchase);
     return response.data;
 };
 

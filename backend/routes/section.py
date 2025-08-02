@@ -16,7 +16,7 @@ async def get_sections(authorization: str = Header(...)) -> list[Section]:
 @router.post("/")
 async def create_section(section: Section, authorization: str = Header(...)):
     user_id = get_user_id_from_token(authorization)
-    section_service.create_section(user_id, section)
+    return section_service.create_section(user_id, section)
     
 @router.patch("/")
 async def update_section(section: Section, authorization: str = Header(...)):

@@ -40,8 +40,9 @@ const Drawer = () => {
 
     const handleAddSection = (name: string) => {
         addSection({ section_name: name }, {
-            onSuccess: () => {
+            onSuccess: (data) => {
                 refetchSections()
+                updateSectionLocation(data.id)
             }
         })
         setIsAddingSection(false);

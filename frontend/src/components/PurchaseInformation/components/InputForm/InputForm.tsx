@@ -46,7 +46,6 @@ const convertToCurrencyAmount = (amount: number | undefined) => {
 }
 
 const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }: InputFormProps) => {
-    console.log(availablePurchase)
     const {tab} = useUserLocation();
     const [displayAmount, setDisplayAmount] = useState<string>(convertToCurrencyAmount(availablePurchase?.amount))
     const [purchase, setPurchase] = useState<Purchase>(availablePurchase ?? {
