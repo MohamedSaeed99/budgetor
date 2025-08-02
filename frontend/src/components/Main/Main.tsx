@@ -10,25 +10,22 @@ const Main = () => {
         <Box sx={{display:"flex", height: "100%", width: "100%"}}>
             <Drawer />
             <Box sx={{
+                flex: '1 1 auto',
                 display: "flex",
-                flexFlow: "column",
-                justifyContent: "space-between",
-                gap: "8px",
-                height: "100%",
-                width: "100%"
+                flexDirection: "column",
             }}>
-                <Box sx={{height: "calc(100% - 40px)", flex: '1 1 auto'}}>
+                <Box sx={{padding: "12px", display: "flex", flex: '1 1 auto', gap: "12px"}}>
+                    <PurchaseInformation />
                     <Visualization />
                 </Box>
                 <Box sx={{
-                    height: '40px',
-                    background: "white",
+                    flex: '0 1 40px',
                     borderTop: "1px solid black"
                 }}>
                     <Tabs />
                 </Box> 
+            </Box>
         </Box>
-    </Box>
     )
 }
 
