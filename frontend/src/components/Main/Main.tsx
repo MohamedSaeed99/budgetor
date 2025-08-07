@@ -4,17 +4,18 @@ import Tabs from "../PurchaseInformation/components/Tab/Tab";
 import Drawer from "../Drawer/Drawer";
 import Visualization from "../Visualization/Visualization";
 import GoalsForm from "../GoalsForm/GoalsForm";
-
+import Chat from "../Chat/Chat";
 
 const Main = () => {
     return (
         <Box sx={{display:"flex", height: "100%", width: "100%"}}>
             <Drawer />
-
-            <Box sx={{
-                padding: "12px", display: "flex", flex: '1 1 auto', gap: "12px"
-            }}>
-                <GoalsForm />
+            
+            <Box sx={{padding: "12px", display: "flex", width: "100%", gap: "12px"}}>
+                <Box sx={{flex:"1"}}>
+                    <GoalsForm />
+                </Box>
+                <Chat />
             </Box>
 
             {/* This is the content layout should display after user answers/skips questions */}

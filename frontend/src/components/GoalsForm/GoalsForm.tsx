@@ -1,7 +1,8 @@
-import { Box, Typography, TextField, styled } from "@mui/material"
+import { Box, Typography, TextField, styled, Button } from "@mui/material"
 import { useState, type ChangeEvent } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { convertToCurrencyAmount } from "../../utils/currency.utils";
 
 const InputField = styled(TextField)({
     margin: 2,
@@ -27,10 +28,9 @@ type BudgetPerCategory = {
     amount: number
 }
 const GoalsForm = () => {
-    const [budgetAmount, setBudgetAmount] = useState();
+    const [budgetAmount, setBudgetAmount] = useState<string>("");
     const [reason, setReason] = useState("");
     const [budgetPerCategory, setBudgetPerCategory] = useState<BudgetPerCategory[]>([])
-
 
     const updateBudgetAmount = (index: number, event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const updatedBudgets = [...budgetPerCategory]
@@ -48,41 +48,59 @@ const GoalsForm = () => {
         setBudgetPerCategory([...budgetPerCategory, {} as BudgetPerCategory])
     }
 
+    // TODO: fix splicing issues
     const deleteBudgetPerCategory = (index: number) => {
         const updatedBudgets = [...budgetPerCategory]
-        console.log(index, updatedBudgets[index])
         updatedBudgets.splice(index, 1);
-        console.log(updatedBudgets)
-        setBudgetPerCategory([...updatedBudgets])
+        setBudgetPerCategory(updatedBudgets)
+    }
+
+    const handleUpdateReason = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setReason(event.target.value)
+    }
+
+    const handleBudgetAmount = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const amount = event.target.value.replace(/[^0-9\.-]+/g,"")
+        setBudgetAmount(convertToCurrencyAmount(parseFloat(amount)))
+    }
+
+    const handleSubmit = () => {
+        console.log("submitted")
     }
 
     return (
-        <Box>
-            <Box sx={{display: "flex", gap: "4px"}}>
-                <Typography>What is the budget for this section?</Typography>
-                <InputField sx={{width: '75px'}} />
-            </Box>
-
+        <form style={{height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between"}} onSubmit={handleSubmit}>
             <Box>
-                <Typography>What are you budgeting for</Typography>
-                <InputField />
+                <Box sx={{display: "flex", gap: "4px"}}>
+                    <Typography>What is the budget for this section?</Typography>
+                    <InputField sx={{width: '75px'}} value={budgetAmount} onChange={handleBudgetAmount} />
+                </Box>
+
+                <Box>
+                    <Typography>What are you budgeting for</Typography>
+                    <InputField value={reason} onChange={handleUpdateReason} />
+                </Box>
+
+                <Box>
+                    <Typography>Category with budgeted amount</Typography>
+                    {budgetPerCategory.map((value, index) => {
+
+                        return (
+                            <Box key={index}>
+                                <InputField value={value.name} sx={{width: '150px'}} onChange={(e) => updateCatgory(index, e)} />
+                                <InputField value={value.amount} sx={{width: '75px'}} onChange={(e) => updateBudgetAmount(index, e)}  />
+                                <DeleteIcon onClick={() => deleteBudgetPerCategory(index)} />
+                            </Box>
+                        )
+                    })}
+                    <AddIcon onClick={addBudgetPerCategory}/>
+                </Box>
             </Box>
 
-            <Box>
-                <Typography>Category with budgeted amount</Typography>
-                {budgetPerCategory.map((value, index) => {
-
-                    return (
-                        <Box key={index}>
-                            <InputField value={value.name} sx={{width: '150px'}} onChange={(e) => updateCatgory(index, e)} />
-                            <InputField value={value.amount} sx={{width: '75px'}} onChange={(e) => updateBudgetAmount(index, e)}  />
-                            <DeleteIcon onClick={() => deleteBudgetPerCategory(index)} />
-                        </Box>
-                    )
-                })}
-                <AddIcon onClick={addBudgetPerCategory}/>
-            </Box>
-        </Box>
+            <Button sx={{alignSelf: "flex-end"}} type="submit">
+                Submit
+            </Button>
+        </form>
     )
 }
 

@@ -7,6 +7,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import { useUserLocation } from "../../../../context/UserLocation";
+import { convertToCurrencyAmount } from "../../../../utils/currency.utils";
 
 type InputFormProps = {
     availablePurchase?: Purchase;
@@ -33,17 +34,6 @@ const InputField = styled(TextField)({
         padding: 0,
     }
 })
-
-const convertToCurrencyAmount = (amount: number | undefined) => {
-    if (amount === undefined) return '';
-    else
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(amount);
-}
 
 const InputForm = ({ availablePurchase, handleAdd, handleDelete, handleUpdate }: InputFormProps) => {
     const {tab} = useUserLocation();
