@@ -1,44 +1,18 @@
 import React, { useState } from 'react';
 import { Box, TextField, Button, Typography, InputAdornment } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-
-interface Message {
-  id: string;
-  text: string;
-  isUser: boolean;
-}
+import useWebSocket from '../../hooks/useWebsocket';
+import Loader from '../Loader/Loader';
 
 const Chat = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Hello! How can I help you with your budget today?',
-      isUser: false
-    }
-  ]);
+  const {sendMessage, messages, isLoading} = useWebSocket();
   const [inputValue, setInputValue] = useState('');
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputValue.trim()) {
-      const newUserMessage: Message = {
-        id: Date.now().toString(),
-        text: inputValue,
-        isUser: true
-      };
-
-      setMessages(prev => [...prev, newUserMessage]);
+      sendMessage(inputValue)
       setInputValue('');
-
-      // Simple response
-      setTimeout(() => {
-        const responseMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: 'Thank you for your message! I\'m here to help with your budgeting needs.',
-          isUser: false
-        };
-        setMessages(prev => [...prev, responseMessage]);
-      }, 1000);
     }
   };
 
@@ -52,10 +26,10 @@ const Chat = () => {
         borderRadius: 2,
     }}>
       {/* Messages */}
-      <Box sx={{ flex: 1, overflowY: 'auto', height: "100%" }}>
-        {messages.map((message) => (
+      <Box sx={{ flex: 1, overflowY: 'auto', height: "100%", width: "400px" }}>
+        {messages.map((message, index) => (
           <Box
-            key={message.id}
+            key={index}
             sx={{
               mb: 1,
               wordBreak: "break-word",
@@ -69,7 +43,8 @@ const Chat = () => {
                 p: 1,
                 borderRadius: 2,
                 bgcolor: message.isUser ? 'primary.main' : 'grey.100',
-                color: message.isUser ? 'white' : 'text.primary'
+                color: message.isUser ? 'white' : 'text.primary',
+                textAlign: 'left'
               }}
             >
               <Typography variant="body2">
@@ -78,12 +53,23 @@ const Chat = () => {
             </Box>
           </Box>
         ))}
+        { isLoading &&
+          <Box sx={{
+            mt: 3,
+            wordBreak: "break-word",
+            textAlign: "left",
+          }}>
+            <Loader />
+          </Box>
+        }
       </Box>
 
       {/* Input */}
       <Box component="form" onSubmit={handleSendMessage}>
         <TextField
           fullWidth
+          multiline
+          maxRows={5}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Type your message..."

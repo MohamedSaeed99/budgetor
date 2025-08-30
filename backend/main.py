@@ -1,7 +1,8 @@
 import uvicorn
 
-from fastapi import FastAPI
-from routes import login, purchase, tab, section
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from websockets.exceptions import ConnectionClosed
+from routes import login, purchase, tab, section, chat
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -24,6 +25,7 @@ app.include_router(purchase.router)
 app.include_router(login.router)
 app.include_router(tab.router)
 app.include_router(section.router)
+app.include_router(chat.router)
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

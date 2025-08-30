@@ -5,3 +5,6 @@ PyJWT
 pydantic
 psycopg2
 python-dotenv
+websockets
+langchain-ollama
+langchain-core
