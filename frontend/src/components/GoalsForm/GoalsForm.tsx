@@ -86,7 +86,6 @@ const GoalsForm = () => {
             newErrors.push("All categories must have a name and positive amount");
         }
         
-        setErrors(newErrors);
         return newErrors.length === 0;
     }
 
