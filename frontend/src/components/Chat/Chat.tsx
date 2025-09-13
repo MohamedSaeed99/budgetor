@@ -26,7 +26,7 @@ const Chat = () => {
         borderRadius: 2,
     }}>
       {/* Messages */}
-      <Box sx={{ flex: 1, overflowY: 'auto', height: "100%", width: "400px" }}>
+      <Box sx={{ flex: 1, overflowY: 'auto', maxHeight: "75vh", width: "400px" }}>
         {messages.map((message, index) => (
           <Box
             key={index}
@@ -36,7 +36,7 @@ const Chat = () => {
               textAlign: message.isUser ? 'right' : 'left'
             }}
           >
-            <Box
+            <Typography variant="body2" 
               sx={{
                 display: 'inline-block',
                 maxWidth: '70%',
@@ -45,12 +45,9 @@ const Chat = () => {
                 bgcolor: message.isUser ? 'primary.main' : 'grey.100',
                 color: message.isUser ? 'white' : 'text.primary',
                 textAlign: 'left'
-              }}
-            >
-              <Typography variant="body2">
-                {message.text}
-              </Typography>
-            </Box>
+              }}>
+              {message.text}
+            </Typography>
           </Box>
         ))}
         { isLoading &&
