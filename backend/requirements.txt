@@ -8,3 +8,4 @@ python-dotenv
 websockets
 langchain-ollama
 langchain-core
+langgraph
