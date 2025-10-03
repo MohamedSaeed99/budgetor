@@ -1,12 +1,7 @@
-import { Box, Typography, TextField, styled, Button, FormControl, Select, MenuItem } from "@mui/material"
+import { Box, Button, styled, TextField, Typography } from "@mui/material";
 import { useState, type ChangeEvent } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import SavingsIcon from '@mui/icons-material/Savings';
-import { convertToCurrencyAmount } from "../../utils/currency.utils";
-import CategoriesForm from "./components/CategoriesForm/CategoriesForm";
 
 const InputField = styled(TextField)({
     margin: 2,
@@ -27,100 +22,41 @@ const InputField = styled(TextField)({
     }
 })
 
+type CategoriesFormProps = {
+    budgetAmount: string
+}
+
 type BudgetPerCategory = {
     name: string,
     amount: number
 }
 
-type BudgetPeriod = 'weekly' | 'monthly' | 'quarterly' | 'yearly'
-
-const GoalsForm = () => {
-    const [budgetAmount, setBudgetAmount] = useState<string>("");
-    const [budgetPeriod, setBudgetPeriod] = useState<BudgetPeriod>('monthly');
+const CategoriesForm = ({budgetAmount}: CategoriesFormProps) => {
     const [budgetPerCategory, setBudgetPerCategory] = useState<BudgetPerCategory[]>([]);
+    
+    const addBudgetPerCategory = () => {
+        setBudgetPerCategory([...budgetPerCategory, { name: '', amount: 0 }]);
+    }
+
+    const updateBudgetAmount = (index: number, event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const updatedBudgets = [...budgetPerCategory];
+        const amount = event.target.value.replace(/[^0-9\.-]+/g, "");
+        updatedBudgets[index].amount = parseFloat(amount) || 0;
+        setBudgetPerCategory(updatedBudgets);
+    }
+
+    const updateCategory = (index: number, event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const updatedBudgets = [...budgetPerCategory];
+        updatedBudgets[index].name = event.target.value;
+        setBudgetPerCategory(updatedBudgets);
+    }
 
     const deleteBudgetPerCategory = (index: number) => {
         setBudgetPerCategory(budgetPerCategory.filter((_, i) => i !== index));
     }
 
-    const handleBudgetAmount = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const amount = event.target.value.replace(/[^0-9\.-]+/g, "");
-        setBudgetAmount(convertToCurrencyAmount(parseFloat(amount) || 0));
-    }
-
-    const validateForm = (): boolean => {
-        const newErrors: string[] = [];
-        
-        if (!budgetAmount || parseFloat(budgetAmount) <= 0) {
-            newErrors.push("Please enter a valid budget amount");
-        }
-        
-        if (budgetPerCategory.length === 0) {
-            newErrors.push("Please add at least one budget category");
-        }
-        
-        const totalCategoryBudget = budgetPerCategory.reduce((sum, cat) => sum + (cat.amount || 0), 0);
-        const totalBudget = parseFloat(budgetAmount) || 0;
-        
-        if (totalCategoryBudget > totalBudget) {
-            newErrors.push("Total category budgets cannot exceed the main budget amount");
-        }
-        
-        if (budgetPerCategory.some(cat => !cat.name.trim() || cat.amount <= 0)) {
-            newErrors.push("All categories must have a name and positive amount");
-        }
-        
-        return newErrors.length === 0;
-    }
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (validateForm()) {
-            const budgetData = {
-                totalAmount: parseFloat(budgetAmount),
-                period: budgetPeriod,
-                categories: budgetPerCategory,
-                createdAt: new Date().toISOString()
-            };
-            console.log("Budget plan submitted:", budgetData);
-            // TODO: Send to API
-        }
-    }
-
     return (
-        <form style={{height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between"}} onSubmit={handleSubmit}>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                <Box sx={{ p: 1, border: '1px solid #e0e0e0', borderRadius: 1, backgroundColor: '#fafafa' }}>
-                    <Typography variant="subtitle1" sx={{ mb: 0.5, fontWeight: 'bold' }}>Set Your Budget</Typography>
-                    <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                        <Typography variant="body2">Budget Amount:</Typography>
-                        <InputField 
-                            sx={{width: '120px'}} 
-                            value={budgetAmount} 
-                            onChange={handleBudgetAmount}
-                            placeholder="0.00"
-                        />
-                        <Typography variant="body2" sx={{ ml: 1 }}>Period:</Typography>
-                        <FormControl size="small" sx={{ minWidth: 80 }}>
-                            <Select
-                                value={budgetPeriod}
-                                onChange={(e) => setBudgetPeriod(e.target.value as BudgetPeriod)}
-                            >
-                                <MenuItem value="weekly">Weekly</MenuItem>
-                                <MenuItem value="monthly">Monthly</MenuItem>
-                                <MenuItem value="quarterly">Quarterly</MenuItem>
-                                <MenuItem value="yearly">Yearly</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Box>
-                    {(!budgetAmount || parseFloat(budgetAmount) <= 0) && (
-                        <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
-                            Please enter a valid budget amount
-                        </Typography>
-                    )}
-                </Box>
-
-                <Box sx={{ p: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+        <Box sx={{ p: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
                     <Typography variant="subtitle1" sx={{ mb: 0.5, fontWeight: 'bold' }}>Break Down Your Budget</Typography>
                     <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary', fontSize: '11px' }}>
                         Add categories and allocate amounts to see how your budget is distributed
@@ -198,19 +134,7 @@ const GoalsForm = () => {
                         return null;
                     })()}
                 </Box>
-
-                <CategoriesForm budgetAmount={budgetAmount} />
-            </Box>
-            <Button 
-                variant="contained" 
-                type="submit"
-                sx={{ alignSelf: "flex-end", mt: 1, height: '32px' }}
-                disabled={budgetPerCategory.length === 0}
-            >
-                Create Budget Plan
-            </Button>
-        </form>
     )
 }
 
-export default GoalsForm;
+export default CategoriesForm
