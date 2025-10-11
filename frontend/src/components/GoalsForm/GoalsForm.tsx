@@ -1,12 +1,10 @@
 import { Box, Typography, TextField, styled, Button, FormControl, Select, MenuItem } from "@mui/material"
 import { useState, type ChangeEvent } from "react";
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import SavingsIcon from '@mui/icons-material/Savings';
-import { convertToCurrencyAmount } from "../../utils/currency.utils";
 import CategoriesForm from "./components/CategoriesForm/CategoriesForm";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { FormDataProvider, useFormData } from "../../context/FormData";
+
+const queryClient = new QueryClient()
 
 const InputField = styled(TextField)({
     margin: 2,
@@ -27,46 +25,36 @@ const InputField = styled(TextField)({
     }
 })
 
-type BudgetPerCategory = {
-    name: string,
-    amount: number
-}
-
 type BudgetPeriod = 'weekly' | 'monthly' | 'quarterly' | 'yearly'
 
 const GoalsForm = () => {
-    const [budgetAmount, setBudgetAmount] = useState<string>("");
+    const {getBudgetAmount, updateBudgetAmount, deleteFormData, getCategories} = useFormData();
     const [budgetPeriod, setBudgetPeriod] = useState<BudgetPeriod>('monthly');
-    const [budgetPerCategory, setBudgetPerCategory] = useState<BudgetPerCategory[]>([]);
-
-    const deleteBudgetPerCategory = (index: number) => {
-        setBudgetPerCategory(budgetPerCategory.filter((_, i) => i !== index));
-    }
 
     const handleBudgetAmount = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const amount = event.target.value.replace(/[^0-9\.-]+/g, "");
-        setBudgetAmount(convertToCurrencyAmount(parseFloat(amount) || 0));
+        updateBudgetAmount(parseFloat(amount));
     }
 
     const validateForm = (): boolean => {
         const newErrors: string[] = [];
         
-        if (!budgetAmount || parseFloat(budgetAmount) <= 0) {
+        if (!getBudgetAmount() || getBudgetAmount() <= 0) {
             newErrors.push("Please enter a valid budget amount");
         }
         
-        if (budgetPerCategory.length === 0) {
+        if (getCategories().length === 0) {
             newErrors.push("Please add at least one budget category");
         }
         
-        const totalCategoryBudget = budgetPerCategory.reduce((sum, cat) => sum + (cat.amount || 0), 0);
-        const totalBudget = parseFloat(budgetAmount) || 0;
+        const totalCategoryBudget = getCategories().reduce((sum, cat) => sum + (cat.amount || 0), 0);
+        const totalBudget = getBudgetAmount() || 0;
         
         if (totalCategoryBudget > totalBudget) {
             newErrors.push("Total category budgets cannot exceed the main budget amount");
         }
         
-        if (budgetPerCategory.some(cat => !cat.name.trim() || cat.amount <= 0)) {
+        if (getCategories().some(cat => !cat.name.trim() || cat.amount <= 0)) {
             newErrors.push("All categories must have a name and positive amount");
         }
         
@@ -77,12 +65,13 @@ const GoalsForm = () => {
         e.preventDefault();
         if (validateForm()) {
             const budgetData = {
-                totalAmount: parseFloat(budgetAmount),
+                totalAmount: getBudgetAmount(),
                 period: budgetPeriod,
-                categories: budgetPerCategory,
+                categories: getCategories(),
                 createdAt: new Date().toISOString()
             };
             console.log("Budget plan submitted:", budgetData);
+            deleteFormData()
             // TODO: Send to API
         }
     }
@@ -96,8 +85,8 @@ const GoalsForm = () => {
                         <Typography variant="body2">Budget Amount:</Typography>
                         <InputField 
                             sx={{width: '120px'}} 
-                            value={budgetAmount} 
-                            onChange={handleBudgetAmount}
+                            value={getBudgetAmount()} 
+                            onChange={(e) => handleBudgetAmount(e)}
                             placeholder="0.00"
                         />
                         <Typography variant="body2" sx={{ ml: 1 }}>Period:</Typography>
@@ -113,99 +102,20 @@ const GoalsForm = () => {
                             </Select>
                         </FormControl>
                     </Box>
-                    {(!budgetAmount || parseFloat(budgetAmount) <= 0) && (
+                    {(!getBudgetAmount() || getBudgetAmount() <= 0) && (
                         <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
                             Please enter a valid budget amount
                         </Typography>
                     )}
                 </Box>
 
-                <Box sx={{ p: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
-                    <Typography variant="subtitle1" sx={{ mb: 0.5, fontWeight: 'bold' }}>Break Down Your Budget</Typography>
-                    <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary', fontSize: '11px' }}>
-                        Add categories and allocate amounts to see how your budget is distributed
-                    </Typography>
-                    
-                    <Box sx={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: 'repeat(3, minmax(200px, 1fr))', 
-                        gap: 1, 
-                        mb: 1 
-                    }}>
-                        {budgetPerCategory.map((category, index) => (
-                            <Box key={index} sx={{ 
-                                display: "flex", 
-                                gap: 0.5, 
-                                alignItems: "center",
-                                p: 0.5,
-                                border: '1px solid #e0e0e0',
-                                borderRadius: 0.5,
-                                backgroundColor: '#fafafa'
-                            }}>
-                                <InputField 
-                                    placeholder="Category"
-                                    value={category.name} 
-                                    sx={{width: '80px', flex: 1}} 
-                                    onChange={(e) => updateCategory(index, e)} 
-                                />
-                                <InputField 
-                                    placeholder="Amount"
-                                    value={category.amount || ''} 
-                                    sx={{width: '60px'}} 
-                                    onChange={(e) => updateBudgetAmount(index, e)}  
-                                />
-                                <DeleteIcon 
-                                    onClick={() => deleteBudgetPerCategory(index)}
-                                    sx={{ cursor: 'pointer', color: 'error.main', fontSize: '16px' }}
-                                />
-                            </Box>
-                        ))}
-                    </Box>
-                    
-                    <Button 
-                        startIcon={<AddIcon />}
-                        onClick={addBudgetPerCategory}
-                        variant="outlined"
-                        size="small"
-                        sx={{ height: '28px' }}
-                    >
-                        Add Category
-                    </Button>
-                    
-                    {/* Category-specific errors */}
-                    {budgetPerCategory.length === 0 && (
-                        <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
-                            Please add at least one budget category
-                        </Typography>
-                    )}
-                    
-                    {budgetPerCategory.some(cat => !cat.name.trim() || cat.amount <= 0) && (
-                        <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
-                            All categories must have a name and positive amount
-                        </Typography>
-                    )}
-                    
-                    {(() => {
-                        const totalCategoryBudget = budgetPerCategory.reduce((sum, cat) => sum + (cat.amount || 0), 0);
-                        const totalBudget = parseFloat(budgetAmount) || 0;
-                        if (totalCategoryBudget > totalBudget) {
-                            return (
-                                <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
-                                    Total category budgets cannot exceed the main budget amount
-                                </Typography>
-                            );
-                        }
-                        return null;
-                    })()}
-                </Box>
-
-                <CategoriesForm budgetAmount={budgetAmount} />
+                <CategoriesForm />
             </Box>
             <Button 
                 variant="contained" 
                 type="submit"
                 sx={{ alignSelf: "flex-end", mt: 1, height: '32px' }}
-                disabled={budgetPerCategory.length === 0}
+                disabled={getCategories().length === 0}
             >
                 Create Budget Plan
             </Button>
@@ -213,4 +123,8 @@ const GoalsForm = () => {
     )
 }
 
-export default GoalsForm;
+const Goals = () => {
+    return <FormDataProvider><GoalsForm/></FormDataProvider>
+}
+
+export default Goals

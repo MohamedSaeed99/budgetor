@@ -1,9 +1,6 @@
 import { Box } from "@mui/material";
-import PurchaseInformation from "../PurchaseInformation/PurchaseInformation";
-import Tabs from "../PurchaseInformation/components/Tab/Tab";
 import Drawer from "../Drawer/Drawer";
-import Visualization from "../Visualization/Visualization";
-import GoalsForm from "../GoalsForm/GoalsForm";
+import Goals from "../GoalsForm/GoalsForm";
 import Chat from "../Chat/Chat";
 
 const Main = () => {
@@ -13,7 +10,7 @@ const Main = () => {
             
             <Box sx={{padding: "12px", display: "flex", width: "100%", gap: "12px"}}>
                 <Box sx={{flex:"1"}}>
-                    <GoalsForm />
+                    <Goals />
                 </Box>
                 <Chat />
             </Box>

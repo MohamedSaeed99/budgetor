@@ -1,12 +1,11 @@
 import { createContext, useContext, useState, type ReactNode } from "react"
 import { useUserLocation } from './UserLocation';
+import type { Category } from "../models/Categories.model";
 
 interface FormDataContextType {
-    addCategory: (category: object) => void,
-    getCategories: () => object[],
-    updateCategory: (index: number, category: object) => void,
-    deleteCategory: (index: number) => void,
-    getBudgetAmount: (amount: number) => number,
+    getCategories: () => Category[],
+    updateCategories: (categories: Category[]) => void,
+    getBudgetAmount: () => number,
     updateBudgetAmount: (amount: number) => void,
     deleteFormData: () => void
 }
@@ -39,27 +38,13 @@ export const FormDataProvider: React.FC<FormDataProviderProps> = ({ children }) 
     const {section} = useUserLocation();
     const formData = parseFormData(section)
     const [budgetAmount, setBudgetAmount] = useState<number>(formData['budgetAmount'] ?? 0)
-    const [categories, setCategories] = useState<object[]>(formData['categories'] ?? [])
-
-    const addCategory = (category: object) => {
-        setCategories([...categories, category])
-    }
 
     const getCategories = () => {
-        return categories
+        return formData['categories'] ?? []
     }
 
-    const updateCategory = (index: number, category: object) => {
-        const updatedCategories = categories
-        updatedCategories[index] = category
-        setCategories(updatedCategories)
-        updateFormData(section, budgetAmount, categories)
-    }
-
-    const deleteCategory = (index: number) => {
-        const updatedCategories = categories.filter((_, i) => i !== index)
-        setCategories(updatedCategories)
-        updateFormData(section, budgetAmount, categories)
+    const updateCategories = (categories: Category[]) => {
+        updateFormData(section, getBudgetAmount(), categories)
     }
 
     const deleteFormData = () => {
@@ -73,15 +58,13 @@ export const FormDataProvider: React.FC<FormDataProviderProps> = ({ children }) 
 
     const updateBudgetAmount = (amount: number) => {
         setBudgetAmount(amount)
-        updateFormData(section, budgetAmount, categories)
+        updateFormData(section, budgetAmount, getCategories())
     }
     
     return (
         <FormDataContext.Provider value={{
             getCategories,
-            addCategory,
-            updateCategory,
-            deleteCategory,
+            updateCategories,
             getBudgetAmount,
             updateBudgetAmount,
             deleteFormData

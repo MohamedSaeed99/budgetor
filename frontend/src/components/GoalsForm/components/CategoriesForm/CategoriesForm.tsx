@@ -1,7 +1,9 @@
 import { Box, Button, styled, TextField, Typography } from "@mui/material";
-import { useState, type ChangeEvent } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useFormData } from "../../../../context/FormData";
+import { useState } from "react";
+import type { Category } from "../../../../models/Categories.model";
 
 const InputField = styled(TextField)({
     margin: 2,
@@ -22,37 +24,29 @@ const InputField = styled(TextField)({
     }
 })
 
-type CategoriesFormProps = {
-    budgetAmount: string
-}
+const CategoriesForm = () => {
+    const {getCategories, updateCategories} = useFormData();
+    const [categories, setCategories] = useState(getCategories);
 
-type BudgetPerCategory = {
-    name: string,
-    amount: number
-}
+    const updateCategory = (index: number, category: Category) => {
+        console.log(category)
+        const updatedCategories = categories
+        updatedCategories[index] = category
+        setCategories([...updatedCategories])
+    }
 
-const CategoriesForm = ({budgetAmount}: CategoriesFormProps) => {
-    const [budgetPerCategory, setBudgetPerCategory] = useState<BudgetPerCategory[]>([]);
-    
+    const handleOnBlur = () => {
+        updateCategories(categories)
+    }
+
+    const deleteCategory = (index: number) => {
+        const updatedCategories = categories.filter((_, i) => i !== index)
+        setCategories(updatedCategories)
+        updateCategories(categories)
+    }
+
     const addBudgetPerCategory = () => {
-        setBudgetPerCategory([...budgetPerCategory, { name: '', amount: 0 }]);
-    }
-
-    const updateBudgetAmount = (index: number, event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const updatedBudgets = [...budgetPerCategory];
-        const amount = event.target.value.replace(/[^0-9\.-]+/g, "");
-        updatedBudgets[index].amount = parseFloat(amount) || 0;
-        setBudgetPerCategory(updatedBudgets);
-    }
-
-    const updateCategory = (index: number, event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const updatedBudgets = [...budgetPerCategory];
-        updatedBudgets[index].name = event.target.value;
-        setBudgetPerCategory(updatedBudgets);
-    }
-
-    const deleteBudgetPerCategory = (index: number) => {
-        setBudgetPerCategory(budgetPerCategory.filter((_, i) => i !== index));
+        setCategories([...categories, {name: '', amount: 0}])
     }
 
     return (
@@ -68,7 +62,7 @@ const CategoriesForm = ({budgetAmount}: CategoriesFormProps) => {
                         gap: 1, 
                         mb: 1 
                     }}>
-                        {budgetPerCategory.map((category, index) => (
+                        {categories.map((category, index) => (
                             <Box key={index} sx={{ 
                                 display: "flex", 
                                 gap: 0.5, 
@@ -82,16 +76,18 @@ const CategoriesForm = ({budgetAmount}: CategoriesFormProps) => {
                                     placeholder="Category"
                                     value={category.name} 
                                     sx={{width: '80px', flex: 1}} 
-                                    onChange={(e) => updateCategory(index, e)} 
+                                    onBlur={handleOnBlur}
+                                    onChange={(e) => updateCategory(index, {name: e.target.value, amount: category.amount})} 
                                 />
                                 <InputField 
                                     placeholder="Amount"
-                                    value={category.amount || ''} 
-                                    sx={{width: '60px'}} 
-                                    onChange={(e) => updateBudgetAmount(index, e)}  
+                                    value={category.amount || 0} 
+                                    sx={{width: '60px'}}
+                                    onBlur={handleOnBlur}
+                                    onChange={(e) => updateCategory(index, {name: category.name, amount: Number.parseFloat(e.target.value)})}  
                                 />
                                 <DeleteIcon 
-                                    onClick={() => deleteBudgetPerCategory(index)}
+                                    onClick={() => deleteCategory(index)}
                                     sx={{ cursor: 'pointer', color: 'error.main', fontSize: '16px' }}
                                 />
                             </Box>
@@ -109,20 +105,20 @@ const CategoriesForm = ({budgetAmount}: CategoriesFormProps) => {
                     </Button>
                     
                     {/* Category-specific errors */}
-                    {budgetPerCategory.length === 0 && (
+                    {/* {getCategories().length === 0 && (
                         <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
-                            Please add at least one budget category
+                            Please add at least one category
                         </Typography>
                     )}
                     
-                    {budgetPerCategory.some(cat => !cat.name.trim() || cat.amount <= 0) && (
+                    {getCategories().some(cat => !cat.name.trim() || cat.amount <= 0) && (
                         <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
                             All categories must have a name and positive amount
                         </Typography>
                     )}
                     
                     {(() => {
-                        const totalCategoryBudget = budgetPerCategory.reduce((sum, cat) => sum + (cat.amount || 0), 0);
+                        const totalCategoryBudget = getCategories().reduce((sum, cat) => sum + (cat.amount || 0), 0);
                         const totalBudget = parseFloat(budgetAmount) || 0;
                         if (totalCategoryBudget > totalBudget) {
                             return (
@@ -132,7 +128,7 @@ const CategoriesForm = ({budgetAmount}: CategoriesFormProps) => {
                             );
                         }
                         return null;
-                    })()}
+                    })()} */}
                 </Box>
     )
 }
