@@ -1,10 +1,12 @@
-import { createContext, useContext, useState, type ReactNode } from "react"
+import { createContext, useContext, type ReactNode } from "react"
 import { useUserLocation } from './UserLocation';
 import type { Category } from "../models/Categories.model";
 
 interface FormDataContextType {
     getCategories: () => Category[],
     updateCategories: (categories: Category[]) => void,
+    getBudgetPeriod: () => string,
+    updateBudgetPeriod: (period: string) => void,
     getBudgetAmount: () => number,
     updateBudgetAmount: (amount: number) => void,
     deleteFormData: () => void
@@ -29,22 +31,29 @@ const parseFormData = (sectionId: string | undefined) => {
     return data ? JSON.parse(data) : {};
 }
 
-const updateFormData = (sectionId: string | undefined, budgetAmount: number, categories: object[]) => {
+const updateFormData = (sectionId: string | undefined, budgetAmount: number, categories: Category[], period: string) => {
     if(!sectionId) return
-    localStorage.setItem(sectionId, JSON.stringify({"budgetAmount": budgetAmount, "categories": categories}))
+    localStorage.setItem(sectionId, JSON.stringify({"budgetAmount": budgetAmount, "categories": categories, "period": period}))
 }
 
 export const FormDataProvider: React.FC<FormDataProviderProps> = ({ children }) => {
     const {section} = useUserLocation();
     const formData = parseFormData(section)
-    const [budgetAmount, setBudgetAmount] = useState<number>(formData['budgetAmount'] ?? 0)
 
     const getCategories = () => {
         return formData['categories'] ?? []
     }
 
     const updateCategories = (categories: Category[]) => {
-        updateFormData(section, getBudgetAmount(), categories)
+        updateFormData(section, getBudgetAmount(), categories, getBudgetPeriod())
+    }
+
+    const getBudgetPeriod = () => {
+        return formData['period'] ?? ""
+    }
+
+    const updateBudgetPeriod = (period: string) => {
+        updateFormData(section, getBudgetAmount(), getCategories(), period)
     }
 
     const deleteFormData = () => {
@@ -53,18 +62,19 @@ export const FormDataProvider: React.FC<FormDataProviderProps> = ({ children }) 
     }
     
     const getBudgetAmount = () => {
-        return budgetAmount
+        return formData['budgetAmount'] ?? 0
     }
 
     const updateBudgetAmount = (amount: number) => {
-        setBudgetAmount(amount)
-        updateFormData(section, budgetAmount, getCategories())
+        updateFormData(section, amount, getCategories(), getBudgetPeriod())
     }
     
     return (
         <FormDataContext.Provider value={{
             getCategories,
             updateCategories,
+            getBudgetPeriod,
+            updateBudgetPeriod,
             getBudgetAmount,
             updateBudgetAmount,
             deleteFormData

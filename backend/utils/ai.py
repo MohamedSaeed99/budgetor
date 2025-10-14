@@ -1,7 +1,6 @@
+import pprint
+from models.category import Category
 from langchain_ollama import ChatOllama
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnableParallel
-from langchain_core.prompts import ChatPromptTemplate
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage
@@ -9,6 +8,7 @@ from typing_extensions import Annotated, TypedDict
 
 class AgentState(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
+    additional_data: dict
 
 resolver_model = ChatOllama(
     model="gemma3n:latest",
@@ -33,7 +33,7 @@ def resolve_user_message(state: AgentState):
         ### Main Objectives:
         1. Help the user define their **total budget amount**.
         2. Identify the **budgeting period** (e.g., weekly, monthly).
-        3. Work with the user to list **spending categories** (e.g., rent, groceries, entertainment).
+        3. Work with the user to list **categories** (e.g., rent, groceries, entertainment).
         4. Allocate specific amounts to each category.
         5. Ensure the total of all categories does not exceed the overall budget.
         6. Suggest adjustments if the budget is unbalanced or missing key expenses.
@@ -52,9 +52,20 @@ def resolve_user_message(state: AgentState):
         Focus on making budgeting feel easy, useful, and doable — no matter the user's background.
     """
     input_message = state['messages'][-1].content
+    budget_amount = state['additional_data']['budget_amount']
+    budget_period = state['additional_data']['budget_period']
+    categories = state['additional_data']['categories']
+
+    user_prompt = f"""
+        {input_message}
+
+        budget_amount: {budget_amount}
+        budget_period: {budget_period}
+        categories: {categories}
+    """
     
     system_message = SystemMessage(content=system_prompt)
-    human_message = HumanMessage(content=input_message)
+    human_message = HumanMessage(content=user_prompt)
     
     response = resolver_model.invoke([system_message, human_message])
     return {'messages': [response]}
@@ -67,13 +78,8 @@ def format_response(state: AgentState):
         {
             "input": "<The original input text>",
             "budget_amount": <The total budget amount as a number, without currency symbols>,
-            "categories": [
-                {
-                    "category": "<Category name>",
-                    "amount": <Allocated amount as a number>
-                },
-                ...
-            ],
+            "budget_period": <The time period of the budget>
+            "categories": <List of Category object, which includes only name and the amount budgeted towards the category>,
             "summary": "<summary of the conversation>"
         }
 
@@ -84,6 +90,7 @@ def format_response(state: AgentState):
         - Preserve the exact input text in the "input" field.
         - Do not assume or infer categories or amounts not explicitly stated.
         - Do not return anything other than the JSON object.
+        - Do not format the response in markdown. I want the plain JSON object.
 
         Stay strictly aligned with the goal: structured parsing into the specified JSON format.
     """
@@ -97,7 +104,7 @@ def format_response(state: AgentState):
 """
     May need to have a multi model invocation. Initial model is to get a text and another model to take the result into a json format.
 """
-def invoke_model(msg: str):
+def invoke_model(msg: str, budget_amount: float, categories: list[Category], budget_period: str):
     graph_builder = StateGraph(AgentState)
 
     graph_builder.add_node("resolver", resolve_user_message)
@@ -111,5 +118,5 @@ def invoke_model(msg: str):
 
     flow = graph_builder.compile()
 
-    output = flow.invoke({'messages': [msg]})
-    return output["messages"][-1].pretty_print()
+    output = flow.invoke({'messages': [msg], 'additional_data': {'budget_amount': budget_amount, 'categories': categories, 'budget_period': budget_period}})
+    return output["messages"][-1].content

@@ -1,19 +1,22 @@
 import { Box } from "@mui/material";
 import Drawer from "../Drawer/Drawer";
-import Goals from "../GoalsForm/GoalsForm";
 import Chat from "../Chat/Chat";
+import { FormDataProvider } from "../../context/FormData";
+import GoalsForm from "../GoalsForm/GoalsForm";
 
 const Main = () => {
     return (
         <Box sx={{display:"flex", height: "100%", width: "100%"}}>
             <Drawer />
             
-            <Box sx={{padding: "12px", display: "flex", width: "100%", gap: "12px"}}>
-                <Box sx={{flex:"1"}}>
-                    <Goals />
+            <FormDataProvider>
+                <Box sx={{padding: "12px", display: "flex", width: "100%", gap: "12px"}}>
+                    <Box sx={{flex:"1"}}>
+                        <GoalsForm />
+                    </Box>
+                    <Chat />
                 </Box>
-                <Chat />
-            </Box>
+            </FormDataProvider>
 
             {/* This is the content layout should display after user answers/skips questions */}
             {/* <Box sx={{

@@ -1,5 +1,4 @@
 import json
-import uuid
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from websockets.exceptions import ConnectionClosed
 
@@ -14,8 +13,8 @@ async def chat_websocket(websocket: WebSocket):
     try:        
         while True:
             msg = await websocket.receive_text()
-            print(f'Chat message received: {msg}')
-            model_response = invoke_model(msg)
+            parsed_message = json.loads(msg)
+            model_response = invoke_model(parsed_message['message'], parsed_message['budget_amount'], parsed_message['categories'], parsed_message['budget_period'])
             await websocket.send_text(json.dumps(model_response))
                 
     except (WebSocketDisconnect, ConnectionClosed):

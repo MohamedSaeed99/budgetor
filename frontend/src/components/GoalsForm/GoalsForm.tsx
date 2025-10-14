@@ -1,10 +1,7 @@
 import { Box, Typography, TextField, styled, Button, FormControl, Select, MenuItem } from "@mui/material"
 import { useState, type ChangeEvent } from "react";
 import CategoriesForm from "./components/CategoriesForm/CategoriesForm";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { FormDataProvider, useFormData } from "../../context/FormData";
-
-const queryClient = new QueryClient()
+import { useFormData } from "../../context/FormData";
 
 const InputField = styled(TextField)({
     margin: 2,
@@ -28,18 +25,29 @@ const InputField = styled(TextField)({
 type BudgetPeriod = 'weekly' | 'monthly' | 'quarterly' | 'yearly'
 
 const GoalsForm = () => {
-    const {getBudgetAmount, updateBudgetAmount, deleteFormData, getCategories} = useFormData();
-    const [budgetPeriod, setBudgetPeriod] = useState<BudgetPeriod>('monthly');
+    const {getBudgetAmount, updateBudgetAmount, deleteFormData, getCategories, getBudgetPeriod, updateBudgetPeriod} = useFormData();
+    const [budgetPeriod, setBudgetPeriod] = useState<string>(getBudgetPeriod);
+    const [budgetAmount, setBudgetAmount] = useState(getBudgetAmount);
 
     const handleBudgetAmount = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const amount = event.target.value.replace(/[^0-9\.-]+/g, "");
-        updateBudgetAmount(parseFloat(amount));
+        setBudgetAmount(parseFloat(amount));
+    }
+
+    const handleOnBlur = () => {
+        updateBudgetAmount(budgetAmount)
+    }
+
+    const handleBudgetPeriod = (event: { target: { value: string; }; }) => {
+        const period = event.target.value as BudgetPeriod
+        setBudgetPeriod(period)
+        updateBudgetPeriod(period)
     }
 
     const validateForm = (): boolean => {
         const newErrors: string[] = [];
         
-        if (!getBudgetAmount() || getBudgetAmount() <= 0) {
+        if (!budgetAmount || budgetAmount <= 0) {
             newErrors.push("Please enter a valid budget amount");
         }
         
@@ -48,7 +56,7 @@ const GoalsForm = () => {
         }
         
         const totalCategoryBudget = getCategories().reduce((sum, cat) => sum + (cat.amount || 0), 0);
-        const totalBudget = getBudgetAmount() || 0;
+        const totalBudget = budgetAmount || 0;
         
         if (totalCategoryBudget > totalBudget) {
             newErrors.push("Total category budgets cannot exceed the main budget amount");
@@ -65,7 +73,7 @@ const GoalsForm = () => {
         e.preventDefault();
         if (validateForm()) {
             const budgetData = {
-                totalAmount: getBudgetAmount(),
+                totalAmount: budgetAmount,
                 period: budgetPeriod,
                 categories: getCategories(),
                 createdAt: new Date().toISOString()
@@ -85,7 +93,8 @@ const GoalsForm = () => {
                         <Typography variant="body2">Budget Amount:</Typography>
                         <InputField 
                             sx={{width: '120px'}} 
-                            value={getBudgetAmount()} 
+                            value={budgetAmount} 
+                            onBlur={handleOnBlur}
                             onChange={(e) => handleBudgetAmount(e)}
                             placeholder="0.00"
                         />
@@ -93,7 +102,8 @@ const GoalsForm = () => {
                         <FormControl size="small" sx={{ minWidth: 80 }}>
                             <Select
                                 value={budgetPeriod}
-                                onChange={(e) => setBudgetPeriod(e.target.value as BudgetPeriod)}
+                                onChange={handleBudgetPeriod}
+                                sx={{height: "25px"}}
                             >
                                 <MenuItem value="weekly">Weekly</MenuItem>
                                 <MenuItem value="monthly">Monthly</MenuItem>
@@ -102,7 +112,7 @@ const GoalsForm = () => {
                             </Select>
                         </FormControl>
                     </Box>
-                    {(!getBudgetAmount() || getBudgetAmount() <= 0) && (
+                    {(!budgetAmount || budgetAmount <= 0) && (
                         <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
                             Please enter a valid budget amount
                         </Typography>
@@ -123,8 +133,4 @@ const GoalsForm = () => {
     )
 }
 
-const Goals = () => {
-    return <FormDataProvider><GoalsForm/></FormDataProvider>
-}
-
-export default Goals
+export default GoalsForm

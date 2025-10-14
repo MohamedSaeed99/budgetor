@@ -3,15 +3,17 @@ import { Box, TextField, Button, Typography, InputAdornment } from '@mui/materia
 import SendIcon from '@mui/icons-material/Send';
 import useWebSocket from '../../hooks/useWebsocket';
 import Loader from '../Loader/Loader';
+import { useFormData } from '../../context/FormData';
 
 const Chat = () => {
+  const {getBudgetAmount, getCategories, getBudgetPeriod} = useFormData();
   const {sendMessage, messages, isLoading} = useWebSocket();
   const [inputValue, setInputValue] = useState('');
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputValue.trim()) {
-      sendMessage(inputValue)
+      sendMessage(inputValue, getBudgetAmount(), getCategories(), getBudgetPeriod())
       setInputValue('');
     }
   };
