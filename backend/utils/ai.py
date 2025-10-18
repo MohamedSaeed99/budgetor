@@ -72,7 +72,7 @@ def resolve_user_message(state: AgentState):
 
 def format_response(state: AgentState):
     system_prompt = """
-        Your task is to extract important information such as the input, budget amount, budget period, categories, and the summary.
+        Your task is to extract important information such as the input, budget amount, budget period, and categories.
 
         I want the extracted information in plain text JSON format strictly following this structure:
         {
@@ -80,7 +80,6 @@ def format_response(state: AgentState):
             "budget_amount": <The total budget amount as a number, without currency symbols>,
             "budget_period": <The time period of the budget>
             "categories": <List of Category object, which includes only name and the amount budgeted towards the category>,
-            "summary": "<summary of the conversation>"
         }
 
         Guidelines:
