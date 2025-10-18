@@ -72,9 +72,9 @@ def resolve_user_message(state: AgentState):
 
 def format_response(state: AgentState):
     system_prompt = """
-        Your task is to extract and return a JSON object from the input text provided.
+        Your task is to extract important information such as the input, budget amount, budget period, categories, and the summary.
 
-        The JSON must strictly follow this structure:
+        I want the extracted information in plain text JSON format strictly following this structure:
         {
             "input": "<The original input text>",
             "budget_amount": <The total budget amount as a number, without currency symbols>,
@@ -90,7 +90,6 @@ def format_response(state: AgentState):
         - Preserve the exact input text in the "input" field.
         - Do not assume or infer categories or amounts not explicitly stated.
         - Do not return anything other than the JSON object.
-        - Do not format the response in markdown. I want the plain JSON object.
 
         Stay strictly aligned with the goal: structured parsing into the specified JSON format.
     """
@@ -119,4 +118,4 @@ def invoke_model(msg: str, budget_amount: float, categories: list[Category], bud
     flow = graph_builder.compile()
 
     output = flow.invoke({'messages': [msg], 'additional_data': {'budget_amount': budget_amount, 'categories': categories, 'budget_period': budget_period}})
-    return output["messages"][-1].content
+    return output["messages"][-1].content.replace("json", "").replace("```", "")

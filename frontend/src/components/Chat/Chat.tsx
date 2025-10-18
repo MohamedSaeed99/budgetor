@@ -40,6 +40,7 @@ const Chat = () => {
           >
             <Typography variant="body2" 
               sx={{
+                whiteSpace: 'pre-line',
                 display: 'inline-block',
                 maxWidth: '70%',
                 p: 1,

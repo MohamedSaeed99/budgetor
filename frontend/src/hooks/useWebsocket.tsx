@@ -23,16 +23,15 @@ const useWebSocket = () => {
             setWs(websocket);
             
             websocket.onmessage = (event) => {
-                const chatResponse = JSON.parse(event.data)                
+                const chatResponse = JSON.parse(event.data)
                 const updatedMessages = messages
-                console.log(chatResponse)
                 updatedMessages.push({
-                    text: chatResponse['input'],
+                    text: chatResponse["input"],
                     isUser: false
                 });
-                updateCategories(chatResponse['categories'])
-                updateBudgetAmount(chatResponse['budget_amount'])
-                updateBudgetPeriod(chatResponse['budget_period'])
+                updateCategories(chatResponse["categories"])
+                updateBudgetAmount(chatResponse["budget_amount"])
+                updateBudgetPeriod(chatResponse["budget_period"])
                 setMessages(updatedMessages);
                 setIsLoading(false);
             };

@@ -15,7 +15,7 @@ async def chat_websocket(websocket: WebSocket):
             msg = await websocket.receive_text()
             parsed_message = json.loads(msg)
             model_response = invoke_model(parsed_message['message'], parsed_message['budget_amount'], parsed_message['categories'], parsed_message['budget_period'])
-            await websocket.send_text(json.dumps(model_response))
+            await websocket.send_text(model_response)
                 
     except (WebSocketDisconnect, ConnectionClosed):
         print("Chat client disconnected")
