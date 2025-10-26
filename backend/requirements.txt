@@ -9,4 +9,4 @@ websockets
 langchain-ollama
 langchain-core
 langgraph
-boto3
+redis
