@@ -3,8 +3,9 @@ from models.category import Category
 from langchain_ollama import ChatOllama
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
-from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage
+from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
 from typing_extensions import Annotated, TypedDict
+from database.redis_connection import get_messages
 
 class AgentState(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
@@ -51,18 +52,17 @@ def resolve_user_message(state: AgentState):
 
         Focus on making budgeting feel easy, useful, and doable — no matter the user's background.
     """
-    input_message = state['messages'][-1].content
+    
+    print(state['messages'])
+    prev_messages = [item.msg for item in state['messages']]
     budget_amount = state['additional_data']['budget_amount']
     budget_period = state['additional_data']['budget_period']
     categories = state['additional_data']['categories']
 
     user_prompt = f"""
         {input_message}
-
-        budget_amount: {budget_amount}
-        budget_period: {budget_period}
-        categories: {categories}
     """
+    print(prev_messages)
     
     system_message = SystemMessage(content=system_prompt)
     human_message = HumanMessage(content=user_prompt)
@@ -102,8 +102,9 @@ def format_response(state: AgentState):
 """
     May need to have a multi model invocation. Initial model is to get a text and another model to take the result into a json format.
 """
-def invoke_model(msg: str, budget_amount: float, categories: list[Category], budget_period: str):
+def invoke_model(user_input):
     graph_builder = StateGraph(AgentState)
+    messages = get_messages(user_input['section_id'])
 
     graph_builder.add_node("resolver", resolve_user_message)
     graph_builder.add_node("formatter", format_response)
@@ -116,5 +117,6 @@ def invoke_model(msg: str, budget_amount: float, categories: list[Category], bud
 
     flow = graph_builder.compile()
 
-    output = flow.invoke({'messages': [msg], 'additional_data': {'budget_amount': budget_amount, 'categories': categories, 'budget_period': budget_period}})
+    print(messages)
+    output = flow.invoke({'messages': messages, 'additional_data': {'budget_amount': user_input['budget_amount'], 'categories': user_input['categories'], 'budget_period': user_input['budget_period']}})
     return output["messages"][-1].content.replace("json", "").replace("```", "")

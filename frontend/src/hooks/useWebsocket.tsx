@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react"
 import type { Category } from "../models/Categories.model";
 import { useFormData } from "../context/FormData";
+import { useUserLocation } from "../context/UserLocation";
 
 interface Message {
     text: string;
@@ -9,6 +10,7 @@ interface Message {
 
 const useWebSocket = () => {
     const {updateCategories, updateBudgetAmount, updateBudgetPeriod} = useFormData()
+    const {section} = useUserLocation()
 
     const [ws, setWs] = useState<WebSocket | undefined>();
     const [messages, setMessages] = useState<Message[]>([{
@@ -62,7 +64,7 @@ const useWebSocket = () => {
             });
             setMessages(updatedMessages);
 
-            ws.send(JSON.stringify({message: input, budget_amount: budget_amount, categories: categories, budget_period: budget_period}));
+            ws.send(JSON.stringify({section_id: section, message: input, budget_amount: budget_amount, categories: categories, budget_period: budget_period}));
             setIsLoading(true);
         } else {
             console.warn("WebSocket is not connected. Message not sent:", input);

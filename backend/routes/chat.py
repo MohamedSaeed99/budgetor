@@ -1,8 +1,8 @@
 import json
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from websockets.exceptions import ConnectionClosed
-from database.dynamo import put_chat, get_chat
 from utils.ai import invoke_model
+from database.redis_connection import get_messages, add_message
 
 router = APIRouter()
 
@@ -14,9 +14,13 @@ async def chat_websocket(websocket: WebSocket):
         while True:
             msg = await websocket.receive_text()
             parsed_message = json.loads(msg)
-            model_response = invoke_model(parsed_message['message'], parsed_message['budget_amount'], parsed_message['categories'], parsed_message['budget_period'])
-            put_chat()
-            await websocket.send_text(model_response)
+            add_message(parsed_message['section_id'], {"msg": parsed_message['message'], "isUser": True})
+            
+            response = invoke_model(parsed_message)
+            json_resp = json.dumps(response)
+            
+            add_message(parsed_message['section_id'],{'msg': json_resp['input'], 'isUser': False})
+            await websocket.send_text(response)
                 
     except (WebSocketDisconnect, ConnectionClosed):
         print("Chat client disconnected")
