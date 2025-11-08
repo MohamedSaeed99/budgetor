@@ -2,6 +2,10 @@ import { Box, Typography, TextField, styled, Button, FormControl, Select, MenuIt
 import { useState, type ChangeEvent } from "react";
 import CategoriesForm from "./components/CategoriesForm/CategoriesForm";
 import { useFormData } from "../../context/FormData";
+import FormSummary from "./components/FormSummary/FormSummary";
+import type { Category, Goal } from "../../models/Categories.model";
+import api from "../../api/api";
+import { useUserLocation } from "../../context/UserLocation";
 
 const InputField = styled(TextField)({
     margin: 2,
@@ -25,13 +29,20 @@ const InputField = styled(TextField)({
 type BudgetPeriod = 'weekly' | 'monthly' | 'quarterly' | 'yearly'
 
 const GoalsForm = () => {
+    const {section} = useUserLocation();
     const {getBudgetAmount, updateBudgetAmount, deleteFormData, getCategories, getBudgetPeriod, updateBudgetPeriod} = useFormData();
     const [budgetPeriod, setBudgetPeriod] = useState<string>(getBudgetPeriod);
     const [budgetAmount, setBudgetAmount] = useState(getBudgetAmount);
+    const [categories, setCategories] = useState(getCategories);
+    const {mutate: addGoal} = api.Goal.AddGoal.useMutation()
 
     const handleBudgetAmount = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const amount = event.target.value.replace(/[^0-9\.-]+/g, "");
         setBudgetAmount(parseFloat(amount));
+    }
+
+    const handleUpdateCategories = (categories: Category[]) => {
+        setCategories(categories)
     }
 
     const handleOnBlur = () => {
@@ -51,36 +62,37 @@ const GoalsForm = () => {
             newErrors.push("Please enter a valid budget amount");
         }
         
-        if (getCategories().length === 0) {
+        if (categories.length === 0) {
             newErrors.push("Please add at least one budget category");
         }
         
-        const totalCategoryBudget = getCategories().reduce((sum, cat) => sum + (cat.amount || 0), 0);
+        const totalCategoryBudget = categories.reduce((sum, cat) => sum + (cat.amount || 0), 0);
         const totalBudget = budgetAmount || 0;
         
         if (totalCategoryBudget > totalBudget) {
             newErrors.push("Total category budgets cannot exceed the main budget amount");
         }
         
-        if (getCategories().some(cat => !cat.name.trim() || cat.amount <= 0)) {
+        if (categories.some(cat => !cat.name.trim() || cat.amount <= 0)) {
             newErrors.push("All categories must have a name and positive amount");
         }
-        
+        console.log(newErrors)
         return newErrors.length === 0;
     }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        console.log("here")
         if (validateForm()) {
             const budgetData = {
-                totalAmount: budgetAmount,
-                period: budgetPeriod,
-                categories: getCategories(),
-                createdAt: new Date().toISOString()
-            };
+                sectionId: section,
+                budgetAmount: budgetAmount,
+                budgetPeriod: budgetPeriod,
+                categories: categories
+            } as Goal;
             console.log("Budget plan submitted:", budgetData);
             deleteFormData()
-            // TODO: Send to API
+            addGoal(budgetData)
         }
     }
 
@@ -119,13 +131,15 @@ const GoalsForm = () => {
                     )}
                 </Box>
 
-                <CategoriesForm />
+                <CategoriesForm categories={categories} handleUpdateCategories={handleUpdateCategories} />
+                <FormSummary categories={categories} budgetAmount={budgetAmount}/>
             </Box>
             <Button 
+                onClick={handleSubmit}
                 variant="contained" 
                 type="submit"
                 sx={{ alignSelf: "flex-end", mt: 1, height: '32px' }}
-                disabled={getCategories().length === 0}
+                disabled={categories.length === 0}
             >
                 Create Budget Plan
             </Button>

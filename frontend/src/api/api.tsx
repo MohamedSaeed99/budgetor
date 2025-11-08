@@ -1,3 +1,4 @@
+import GoalAPI from "./GoalAPI/useGoalQuery";
 import PurchaseAPI from "./PurchaseAPI/usePurchaseQuery"
 import SectionAPI from "./SectionAPI/useSectionQuery";
 import TabsAPI from "./TabsAPI/useTabsQuery";
@@ -7,7 +8,8 @@ const api = {
     Purchase: PurchaseAPI,
     User: UserAPI,
     Tabs: TabsAPI,
-    Section: SectionAPI
+    Section: SectionAPI,
+    Goal: GoalAPI
 }
 
 export default api;

@@ -1,14 +1,14 @@
-from models.tab import TabEntity
+from models.tab import Tab
 import database.repository.tab_repository as repository
 
-def get_tabs(user_id: str, section_id: str):
-    return [tab.to_response() for tab in repository.get_tabs_by_section(section_id, user_id)]
+def get_tabs(section_id: str):
+    return [tab for tab in repository.get_tabs_by_section(section_id)]
 
-def create_tab(user_id: str, tab: TabEntity):
-    return repository.create_tab(tab.to_entity(user_id)).to_response()
+def create_tab(tab: Tab):
+    return repository.create_tab(tab)
 
-def update_tab(user_id: str, tab: TabEntity):
-    repository.update_tab(tab.to_entity(user_id))
+def update_tab(tab: Tab):
+    repository.update_tab(tab)
 
-def delete_tab(user_id: str, tab_id: str):
-    repository.delete_tab(tab_id, user_id)
+def delete_tab(tab_id: str):
+    repository.delete_tab(tab_id)

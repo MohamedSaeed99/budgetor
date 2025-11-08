@@ -3,12 +3,12 @@ from models.category import Category
 from langchain_ollama import ChatOllama
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
-from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
-from typing_extensions import Annotated, TypedDict
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+from typing import TypedDict, Annotated, Union
 from database.redis_connection import get_messages
 
 class AgentState(TypedDict):
-    messages: Annotated[list[BaseMessage], add_messages]
+    messages: Annotated[list[Union[HumanMessage, AIMessage]], add_messages]    
     additional_data: dict
 
 resolver_model = ChatOllama(
@@ -52,22 +52,14 @@ def resolve_user_message(state: AgentState):
 
         Focus on making budgeting feel easy, useful, and doable — no matter the user's background.
     """
-    
-    print(state['messages'])
-    prev_messages = [item.msg for item in state['messages']]
+    messages = state['messages']
     budget_amount = state['additional_data']['budget_amount']
     budget_period = state['additional_data']['budget_period']
     categories = state['additional_data']['categories']
-
-    user_prompt = f"""
-        {input_message}
-    """
-    print(prev_messages)
     
     system_message = SystemMessage(content=system_prompt)
-    human_message = HumanMessage(content=user_prompt)
     
-    response = resolver_model.invoke([system_message, human_message])
+    response = resolver_model.invoke([system_message, *messages])
     return {'messages': [response]}
 
 def format_response(state: AgentState):
@@ -104,7 +96,7 @@ def format_response(state: AgentState):
 """
 def invoke_model(user_input):
     graph_builder = StateGraph(AgentState)
-    messages = get_messages(user_input['section_id'])
+    rmessages = get_messages(user_input['section_id'])
 
     graph_builder.add_node("resolver", resolve_user_message)
     graph_builder.add_node("formatter", format_response)
@@ -117,6 +109,6 @@ def invoke_model(user_input):
 
     flow = graph_builder.compile()
 
-    print(messages)
+    messages = [HumanMessage(content=item['msg']) if item['isUser'] else AIMessage(content=item['msg']) for item in rmessages]
     output = flow.invoke({'messages': messages, 'additional_data': {'budget_amount': user_input['budget_amount'], 'categories': user_input['categories'], 'budget_period': user_input['budget_period']}})
     return output["messages"][-1].content.replace("json", "").replace("```", "")

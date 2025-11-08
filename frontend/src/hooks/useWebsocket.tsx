@@ -9,7 +9,7 @@ interface Message {
 }
 
 const useWebSocket = () => {
-    const {updateCategories, updateBudgetAmount, updateBudgetPeriod} = useFormData()
+    const {updateFormDataByAI} = useFormData()
     const {section} = useUserLocation()
 
     const [ws, setWs] = useState<WebSocket | undefined>();
@@ -31,9 +31,8 @@ const useWebSocket = () => {
                     text: chatResponse["input"],
                     isUser: false
                 });
-                updateCategories(chatResponse["categories"])
-                updateBudgetAmount(chatResponse["budget_amount"])
-                updateBudgetPeriod(chatResponse["budget_period"])
+                console.log(chatResponse, chatResponse["categories"], chatResponse["budget_amount"], chatResponse["budget_period"])
+                updateFormDataByAI(chatResponse["budget_amount"], chatResponse["categories"] as Category[], chatResponse["budget_period"])
                 setMessages(updatedMessages);
                 setIsLoading(false);
             };

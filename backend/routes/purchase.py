@@ -8,22 +8,17 @@ router = APIRouter(
 )
 
 @router.get("/{tab_id}")
-async def get_purchases(tab_id: str, authorization: str = Header(...)):
-    user_id = get_user_id_from_token(authorization)
-    return purchase_service.get_purchases(user_id, tab_id)
+async def get_purchases(tab_id: str):
+    return purchase_service.get_purchases(tab_id)
 
 @router.post("/")
-async def create_purchase(purchase: Purchase, authorization: str = Header(...)):
-    user_id = get_user_id_from_token(authorization)
-    purchase_service.create_purchase(user_id, purchase)
+async def create_purchase(purchase: Purchase):
+    purchase_service.create_purchase(purchase)
 
 @router.patch("/")
-async def update_purchase(purchase: Purchase, authorization: str = Header(...)):
-    print(purchase)
-    user_id = get_user_id_from_token(authorization)
-    purchase_service.update_purchase(user_id, purchase)
+async def update_purchase(purchase: Purchase):
+    purchase_service.update_purchase(purchase)
 
 @router.delete("/{purchase_id}")
-async def delete_purchase(purchase_id: str, authorization: str = Header(...)):
-    user_id = get_user_id_from_token(authorization)
-    purchase_service.delete_purchase(user_id, purchase_id)
+async def delete_purchase(purchase_id: str):
+    purchase_service.delete_purchase(purchase_id)

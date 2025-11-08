@@ -9,7 +9,8 @@ interface FormDataContextType {
     updateBudgetPeriod: (period: string) => void,
     getBudgetAmount: () => number,
     updateBudgetAmount: (amount: number) => void,
-    deleteFormData: () => void
+    deleteFormData: () => void,
+    updateFormDataByAI: (amount: number, categories: Category[], period: string) => void
 }
 
 const FormDataContext = createContext<FormDataContextType | undefined>(undefined)
@@ -33,6 +34,7 @@ const parseFormData = (sectionId: string | undefined) => {
 
 const updateFormData = (sectionId: string | undefined, budgetAmount: number, categories: Category[], period: string) => {
     if(!sectionId) return
+    console.log(`update form data ${sectionId} ${budgetAmount} ${categories}, ${period}`)
     localStorage.setItem(sectionId, JSON.stringify({"budgetAmount": budgetAmount, "categories": categories, "period": period}))
 }
 
@@ -42,6 +44,10 @@ export const FormDataProvider: React.FC<FormDataProviderProps> = ({ children }) 
 
     const getCategories = () => {
         return formData['categories'] ?? []
+    }
+
+    const updateFormDataByAI = (budgetAmount: number, categories: Category[], period: string) => {
+        updateFormData(section, budgetAmount, categories, period)
     }
 
     const updateCategories = (categories: Category[]) => {
@@ -77,7 +83,8 @@ export const FormDataProvider: React.FC<FormDataProviderProps> = ({ children }) 
             updateBudgetPeriod,
             getBudgetAmount,
             updateBudgetAmount,
-            deleteFormData
+            deleteFormData,
+            updateFormDataByAI
         }}>
             {children}
         </FormDataContext.Provider>

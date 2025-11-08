@@ -1,22 +1,21 @@
 from database.database import execute_query
-from models.purchase import PurchaseEntity
+from models.purchase import Purchase
 
-def get_purchases(user_id: str, tab_id: str) -> list[PurchaseEntity]:
+def get_purchases(tab_id: str) -> list[Purchase]:
     query = """
         SELECT * FROM purchases 
-        WHERE user_id = %s AND tab_id = %s 
+        WHERE tab_id = %s 
         ORDER BY created_at DESC
     """
-    results = execute_query(query, (user_id, tab_id), fetch_all=True)
+    results = execute_query(query, tab_id, fetch_all=True)
     
     if results is None:
         return []
     
     purchases = []
     for result in results:
-        purchase = PurchaseEntity(
+        purchase = Purchase(
             id=result['id'],
-            user_id=result['user_id'],
             tab_id=result['tab_id'],
             purchase_date=result['purchase_date'],
             store=result['store'],
@@ -29,28 +28,28 @@ def get_purchases(user_id: str, tab_id: str) -> list[PurchaseEntity]:
     
     return purchases
 
-def create_purchase(purchase: PurchaseEntity):
+def create_purchase(purchase: Purchase):
     query = """
-        INSERT INTO purchases (user_id, tab_id, purchase_date, store, amount, category)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        INSERT INTO purchases (tab_id, purchase_date, store, amount, category)
+        VALUES (%s, %s, %s, %s, %s)
     """
     execute_query(
         query, 
-        (purchase.user_id, purchase.tab_id, purchase.purchase_date, purchase.store, purchase.amount, purchase.category)
+        (purchase.tab_id, purchase.purchase_date, purchase.store, purchase.amount, purchase.category)
     )
 
-def update_purchase(purchase: PurchaseEntity):
+def update_purchase(purchase: Purchase):
     query = """
         UPDATE purchases 
         SET purchase_date = %s, store = %s, amount = %s, category = %s, updated_at = CURRENT_TIMESTAMP
-        WHERE id = %s AND user_id = %s AND tab_id = %s
+        WHERE id = %s AND tab_id = %s
     """
     execute_query(
         query,
-        (purchase.purchase_date, purchase.store, purchase.amount, purchase.category, purchase.id, purchase.user_id, purchase.tab_id)
+        (purchase.purchase_date, purchase.store, purchase.amount, purchase.category, purchase.id, purchase.tab_id)
     )
 
-def delete_purchase(purchase_id: int, user_id: str) -> bool:
-    query = "DELETE FROM purchases WHERE id = %s AND user_id = %s"
-    result = execute_query(query, (purchase_id, user_id))
+def delete_purchase(purchase_id: int) -> bool:
+    query = "DELETE FROM purchases WHERE id = %s"
+    result = execute_query(query, purchase_id)
     return result is not None and result > 0

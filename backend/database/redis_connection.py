@@ -10,7 +10,8 @@ def connect():
         
 def add_message(section_id: str, message: dict):
     r = connect()
-    r.rpush(f"messages_{section_id}:list", json.dumps(message))
+    json_str = json.dumps(message)
+    r.rpush(f"messages_{section_id}:list", json_str)
     
 def get_messages(section_id: str) -> list[str]:
     r = connect()

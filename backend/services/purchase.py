@@ -1,15 +1,15 @@
 import database.repository.purchase_repository as repository
-from models.purchase import Purchase, PurchaseEntity
+from models.purchase import Purchase
 
-def get_purchases(user_id: str, tab_id: str) -> list[PurchaseEntity]:
-    purchases = [ entity.to_response() for entity in repository.get_purchases(user_id, tab_id) ]
+def get_purchases(tab_id: str) -> list[Purchase]:
+    purchases = [entity for entity in repository.get_purchases(tab_id)]
     return sorted(purchases, key=lambda purchase: purchase.purchase_date)
 
-def create_purchase(user_id: str, purchase: Purchase):
-    repository.create_purchase(purchase.to_entity(user_id))
+def create_purchase(purchase: Purchase):
+    repository.create_purchase(purchase)
 
-def update_purchase(user_id: str, purchase: Purchase):
-    repository.update_purchase(purchase.to_entity(user_id))
+def update_purchase(purchase: Purchase):
+    repository.update_purchase(purchase)
 
-def delete_purchase(user_id: str, purchase_id: str):
-    repository.delete_purchase(purchase_id, user_id)
+def delete_purchase(purchase_id: str):
+    repository.delete_purchase(purchase_id)

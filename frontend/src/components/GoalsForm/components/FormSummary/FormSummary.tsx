@@ -2,18 +2,20 @@ import { Box, Typography } from "@mui/material"
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import SavingsIcon from '@mui/icons-material/Savings';
-
+import type { Category } from "../../../../models/Categories.model";
 
 type FormSummaryProps = {
-    budgetAmount: string
+    categories: Category[],
+    budgetAmount: number
 }
-const FormSummary = ({budgetAmount}: FormSummaryProps) => {
+
+const FormSummary = ({budgetAmount, categories}: FormSummaryProps) => {
     const getTotalCategoryBudget = () => {
-        return budgetPerCategory.reduce((sum, cat) => sum + (cat.amount || 0), 0);
+        return categories.reduce((sum: number, cat: Category) => sum + (cat.amount || 0), 0);
     }
     
     const getRemainingBudget = () => {
-        const total = parseFloat(budgetAmount) || 0;
+        const total = budgetAmount || 0;
         const used = getTotalCategoryBudget();
         return total - used;
     }
@@ -44,7 +46,7 @@ const FormSummary = ({budgetAmount}: FormSummaryProps) => {
                         <AccountBalanceWalletIcon sx={{ fontSize: '16px', color: '#FFD700' }} />
                         <Typography variant="caption" sx={{ opacity: 0.9, textAlign: 'center', fontSize: '10px' }}>Total Budget</Typography>
                         <Typography variant="body1" fontWeight="bold" sx={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
-                            ${parseFloat(budgetAmount) || 0}
+                            ${budgetAmount || 0}
                         </Typography>
                     </Box>
                     
@@ -97,3 +99,5 @@ const FormSummary = ({budgetAmount}: FormSummaryProps) => {
         </Box>
     )
 }
+
+export default FormSummary

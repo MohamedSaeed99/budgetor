@@ -24,15 +24,18 @@ const InputField = styled(TextField)({
     }
 })
 
-const CategoriesForm = () => {
-    const {getCategories, updateCategories} = useFormData();
-    const [categories, setCategories] = useState(getCategories);
+type CategoriesFormProps = {
+    categories: Category[],
+    handleUpdateCategories: (categories: Category[]) => void
+}
+
+const CategoriesForm = ({categories, handleUpdateCategories}: CategoriesFormProps) => {
+    const {updateCategories} = useFormData();
 
     const updateCategory = (index: number, category: Category) => {
-        console.log(category)
         const updatedCategories = categories
         updatedCategories[index] = category
-        setCategories([...updatedCategories])
+        handleUpdateCategories([...updatedCategories])
     }
 
     const handleOnBlur = () => {
@@ -41,12 +44,12 @@ const CategoriesForm = () => {
 
     const deleteCategory = (index: number) => {
         const updatedCategories = categories.filter((_, i) => i !== index)
-        setCategories(updatedCategories)
+        handleUpdateCategories(updatedCategories)
         updateCategories(categories)
     }
 
     const addBudgetPerCategory = () => {
-        setCategories([...categories, {name: '', amount: 0}])
+        handleUpdateCategories([...categories, {name: '', amount: 0}])
     }
 
     return (
